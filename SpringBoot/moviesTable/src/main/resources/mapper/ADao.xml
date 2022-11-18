@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD 3.0//EN"
+						"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springlec.base.dao.ADao">
+
+	<select id="listDao" resultType="com.springlec.base.model.ADto">
+		SELECT * FROM movies
+	</select>
+</mapper>

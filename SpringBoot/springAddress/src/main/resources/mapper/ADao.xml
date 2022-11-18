@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD 3.0//EN"
+						"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springlec.base.dao.ADao">
+
+	<select id="listDao" resultType="com.springlec.base.model.ADto">
+	<choose>
+		<when test="search != null and search != ''">
+			SELECT * FROM ABQuery WHERE ${type} like '%${search}%'
+		</when>
+		<otherwise>
+			SELECT * FROM ABQuery
+		</otherwise>
+	</choose>
+	</select>
+	
+	<insert id="writeDao">
+		INSERT INTO ABQuery (name, tel, address, email, relation)
+		VALUES (#{name}, #{tel}, #{address}, #{email}, #{relation})
+	</insert>
+
+	<select id="viewDao" resultType="com.springlec.base.model.ADto">
+		SELECT * FROM ABQuery WHERE seq = #{seq}
+	</select>
+	
+	<delete id="deleteDao">
+		DELETE FROM ABQuery WHERE seq = #{seq}
+	</delete>
+	
+	<update id="updateDao">
+		UPDATE ABQuery SET name = #{name}, tel = #{tel}, address = #{address}, email = #{email}, relation = #{relation}
+		WHERE seq = #{seq}
+	</update>
+	
+</mapper>
