@@ -1,0 +1,100 @@
+# 주성분 분석
+
+서로 연관되어 있는 변수들이 관측 되었을때, 이 변수들이 전체적으로 가지고 있는 정보를 최대한 확보하는 적은수의 변수를 생성하는 방법
+
+### 설문지를 이용한 주성분 분석
+
+```{r}
+data <- read.table("./Data/pasta.txt")
+head(data)
+```
+
+다중 공선성 확인 : 너무 상관이 높아서 마치 쌍둥이 데이터 인것 찾기
+
+```{r}
+cor(data)
+```
+
+표준화 : 평균을 0으로, 표준편차는 1로 변경
+
+```{r}
+data1 <- scale(data)
+summary(data1)
+```
+
+```{r}
+apply(data1, 2, sd)
+```
+
+```{r}
+p1 <- prcomp(data, scale = T)
+biplot(p1)
+```
+
+```{r}
+ramyeon <- read.table("./Data/라면.txt",header = T,)
+rownames(ramyeon) <- ramyeon[,1]
+ramyeon <- ramyeon[,2:4]
+ramyeon
+```
+
+```{r}
+par(family="AppleGothic")
+p2 <- prcomp(ramyeon, scale = T)
+biplot(p2)
+```
+
+## USArrests
+
+이 데이터 세트에는 1973년 미국 50개주에서 각각 10만명당 폭행, 살인, 강간으로 체포된 통계
+
+도시지역에 살고 있는 인구 비율도 있음
+
+```{r}
+head(USArrests)
+```
+
+상관계수
+
+```{r}
+cor(USArrests)
+```
+
+주성분 분석
+
+```{r}
+result <- princomp(USArrests, cor = T)
+summary(result)
+```
+
+```{r}
+biplot(result)
+```
+
+```{r}
+result$loadings
+```
+
+1주성분으로 새로운 변수값 생성
+
+```{r}
+score <- 0.536 * USArrests$Murder + 0.583 * USArrests$Assault + 0.278 * USArrests$UrbanPop + 0.543 * USArrests$Rape
+score
+```
+
+states와 주성분으로 데이터프레임
+
+```{r}
+Result <- data.frame(States = rownames(USArrests), Score = score)
+head(Result)
+```
+
+우선 순위
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+head(arrange(Result, desc(Score)),10)
+```

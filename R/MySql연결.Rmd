@@ -1,0 +1,120 @@
+# MySql 연결
+
+```{r}
+version
+```
+
+```{r}
+library(RMySQL)
+```
+
+```{r}
+# DB Connection
+conn <- dbConnect(MySQL(),
+                  dbname = "RSQL",
+                  user = "root",
+                  password = "qwer1234",
+                  host = "127.0.0.1"
+                  )
+```
+
+### 테이블 목록
+
+```{r}
+dbListTables(conn)
+```
+
+### 컬럼 목록
+
+```{r}
+dbListFields(conn, "score")
+```
+
+### select
+
+```{r}
+result <- dbGetQuery(conn, "select count(*) from score")
+result
+```
+
+### insert
+
+```{r}
+dbSendQuery(conn, "insert into score values(1,100,100,100)")
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+```{r}
+dbSendQuery(conn, "insert into score values(2,90,90,90)")
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+### update
+
+```{r}
+dbSendQuery(conn, "update score set korean = 90, english = 80, mathematics = 70 where id = 2")
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+### delete
+
+```{r}
+dbSendQuery(conn, "delete from score where id = 2")
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+##### delete로 전부 지우기
+
+```{r}
+dbSendQuery(conn, "delete from score")
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+### MySql로 csv file 올리기
+
+```{r}
+data <- read.csv("./Data/score.csv", header = F)
+colnames(data) <- c("id","korean","english","mathematics")
+head(data)
+```
+
+### MySql에서 실행
+
+show variables like 'local_infile';
+
+set global local_infile = 1;
+
+```{r}
+dbWriteTable(conn, "score", data, overwrite = T, row.names = F)
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+```{r}
+str(result)
+```
+
+### 기존 Table에 Data 추가하기
+
+```{r}
+data2 <- read.csv("./Data/score2.csv", header = F)
+colnames(data2) <- c("id","korean","english","mathematics")
+head(data2)
+```
+
+```{r}
+dbWriteTable(conn, "score", data2, overwrite = F, row.names = F, append = T)
+result <- dbGetQuery(conn, "select * from score")
+result
+```
+
+### Disconnect
+
+```{r}
+dbDisconnect(conn)
+```

@@ -1,0 +1,176 @@
+# 회귀분석
+
+단순회귀 분석과 다중 회귀 분석
+
+```{r}
+regression <- read.csv("./Data/regression.csv")
+head(regression)
+```
+
+```{r}
+str(regression)
+```
+
+```{r}
+summary(regression$Height)
+summary(regression$Weight)
+```
+
+```{r}
+plot(regression$Height,regression$Weight)
+```
+
+```{r}
+cor(regression$Height,regression$Weight)
+```
+
+```{r}
+# 회귀선 (중심선, 평균선)
+plot(regression$Weight~regression$Height)
+
+# 회귀식 : lm(종속변수 ~ 독립변수)
+r <- lm(regression$Weight ~ regression$Height)
+abline(r, col="red")
+```
+
+```{r}
+summary(r)
+```
+
+p-value : \< 2.2e-16 \< 0.05
+
+Adjusted R-squared : 0.9333 \<- 예측력
+
+Residual standard error : 6.355 \<- 표준 오차
+
+```{r}
+r
+```
+
+y = ax + b
+
+몸무게 = 0.6147 \* 키 + (-40.8659)
+
+키가 170cm인 사람의 몸무게를 예측
+
+```{r}
+0.6147 * 170 + (-40.8659)
+
+# 표준오차를 적용한 키가 170인 사람의 몸무게
+paste(0.6147 * 170 + (-40.8659) - 6.355, "~", 0.6147 * 170 + (-40.8659) + 6.355)
+```
+
+# IQ
+
+```{r}
+iq <- read.csv("./Data/IQ.csv")
+iq
+```
+
+```{r}
+str(iq)
+```
+
+### (1) IQ가 126인 사람의 성적을 예측해 보세요
+
+```{r}
+iq_r <- lm(iq$성적 ~ iq$IQ)
+```
+
+```{r}
+summary(iq_r)
+```
+
+성적 = 0.6714 \* iq
+
+```{r}
+0.6714 * 126
+
+paste(0.6714 * 126 - 3.322, "~", 0.6714 * 126 + 3.322)
+```
+
+### (2) 성적과 가장 관련이 깊은 항목은 ?
+
+```{r}
+cor(iq[,-1])
+```
+
+### (3) 학원을 몇군데 다녀야 90점이 될까?
+
+```{r}
+iq_a <- lm(iq$다니는.학원수 ~ iq$성적)
+summary(iq_a)
+```
+
+학원수 = 0.12410 \* 성적 + (-7.89163)
+
+```{r}
+0.12410 * 90 + (-7.89163)
+
+paste(0.12410 * 90 + (-7.89163) - 0.7882, "~", 0.12410 * 90 + (-7.89163) + 0.7882)
+```
+
+# 다중 회귀 분석
+
+: 어러개의 항목들로 구성된 식으로 예측하는 방법
+
+```{r}
+data("attitude")
+```
+
+```{r}
+head(attitude)
+```
+
+```{r}
+str(attitude)
+```
+
+```{r}
+plot(attitude)
+```
+
+### rating을 제외한 변수들이 rating에 어떤 영향을 미치는지 회귀분석
+
+```{r}
+model <- lm(rating ~ ., data = attitude)
+model
+```
+
+```{r}
+summary(model)
+```
+
+### 예측력 향상
+
+```{r}
+reduced <- step(model, direction = "backward")
+reduced
+```
+
+```{r}
+summary(reduced)
+```
+
+# iris에 대한 다중 회귀분석
+
+```{r}
+iris_test <- iris
+iris_test$Species <- as.numeric(iris$Species)
+Species <- lm(Species ~ ., data = iris_test)
+```
+
+```{r}
+summary(Species)
+```
+
+```{r}
+reduced <- step(Species, direction = "backward")
+reduced
+```
+
+```{r}
+summary(reduced)
+```
+
+a1x1 + b2x2 + c3x3 + 0.2187

@@ -1,0 +1,250 @@
+# Mushroom
+
+### RandomForest를 이용한 버섯 분류
+
+```{r}
+mr <- read.csv("./Data/mushroom.csv", header = F)
+head(mr)
+```
+
+8124종류의 버섯의 특징과 독의 유무를 정리해논 데이터셋
+
+V1 : 독의 유무, 독(p), 식용(e)
+
+V2 : 버섯의 머리모양, b(벨형태), c(원뿔), x(볼록), f(평평), k(혹), s(오목)
+
+V4 : 버섯의 머리색, n(갈색), b(황갈색), c(연한갈색), g(회색)
+
+자세한 내용은 사이트 참조
+
+```{r}
+str(mr)
+```
+
+### 머신러닝을 사용하기 위해선 숫자가 필요하고, chr를 일일이 숫자로 바꾸지 않기 위해선 factor로 변경 후 factor의 숫자를 획득
+
+```{r}
+for(i in 2:23) {
+  mr[,i] = as.factor(mr[,i])
+}
+str(mr)
+```
+
+```{r}
+for(i in 2:23) {
+  mr[,i] = as.numeric(mr[,i])
+}
+head(mr)
+```
+
+V1기준으로 p와 e를 정렬
+
+```{r}
+library(dplyr)
+mr <- arrange(mr, V1)
+head(mr)
+```
+
+```{r}
+table(mr[,1])
+
+3916 / 4208
+```
+
+```{r}
+set.seed(1234)
+samp <- createDataPartition(mr$V1, p=0.7, list=F)
+tail(samp)
+data.train <- mr[samp,]
+data.test <- mr[-samp,]
+```
+
+```{r}
+rf <- randomForest(V1 ~ ., data = data.train, ntree = 100)
+rf
+```
+
+```{r}
+x <- subset(data.test, select = -V1)
+y <- data.test$V1
+```
+
+```{r}
+pred <- predict(rf, x)
+```
+
+```{r}
+mean(pred == y) * 100
+table(pred, y)
+```
+
+### 인공신경망
+
+```{r}
+rf2 <- nnet(V1 ~ ., data = data.train, size = 2)
+rf2
+```
+
+```{r}
+pred2 <- predict(rf2, x, type="class")
+```
+
+```{r}
+mean(pred2 == y) * 100
+table(pred2, y)
+```
+
+### SVM
+
+```{r}
+rf3 <- svm(V1 ~ ., data = data.train)
+```
+
+```{r}
+pred3 <- predict(rf3, x, type="class")
+```
+
+```{r}
+mean(pred3 == y) * 100
+table(pred3, y)
+```
+
+# Mushroom을 One-Hot Encoding으로 Machine Learning 사용하기
+
+```{r}
+for(i in 1:23) {
+  mr[,i] <- as.factor(mr[,i])
+}
+head(mr)
+```
+
+## One-hot Encoding
+
+### 각 컬럼별 Data 확인
+
+```{r}
+for(i in 2:23) {
+  cat("column name : ", colnames(mr)[i])
+  print(table(mr[,i]))
+  cat("---------------------\n")
+}
+```
+
+### 작업 수행후의 컬럼 개수 파악
+
+```{r}
+num <- c()
+for (i in 2:23) {
+  num = append(num, length(unique(mr[,i])))
+}
+sum(num)
+```
+
+### 별도의 DataFrame 생성
+
+```{r}
+mr2 <- data.frame(V1 = mr$V1)
+mr2
+```
+
+```{r}
+sort(unique(mr$V2))
+```
+
+```{r}
+for (i in 2:23) {
+  for (j in sort(unique(mr[,i]))) {
+    mr2 = cbind(mr2, mr[,i] == j)
+  }
+}
+mr2
+```
+
+```{r}
+str(mr2)
+```
+
+```{r}
+mr2 <- arrange(mr2, V1)
+```
+
+### 정렬을 하려고 하면 컬럼 이름때문에 Error가 발생
+
+```{r}
+colnames(mr2) <- paste("V",1:118,sep="")
+head(mr2)
+```
+
+Column이름과 One-Hot-Encoding 한번에 처리하기
+
+```{r}
+mr3 <- data.frame(V1 = mr$V1)
+head(mr3)
+```
+
+```{r}
+count = 2
+for (i in 2:23) {
+  for (j in sort(unique(mr[,i]))) {
+    mr3 = cbind(mr3, mr[,i] == j)
+    colnames(mr3)[count] <- paste("V",i,"_",j,sep="")
+    count = count + 1
+  }
+}
+head(mr3)
+```
+
+```{r}
+str(mr3)
+```
+
+```{r}
+mr3 <- arrange(mr3, V1)
+head(mr3)
+```
+
+### RandomForest
+
+```{r}
+set.seed(1234)
+samp <- createDataPartition(mr3$V1, p=0.7, list=F)
+tail(samp)
+data.train <- mr3[samp,]
+data.test <- mr3[-samp,]
+```
+
+```{r}
+rf <- randomForest(V1 ~ ., data = data.train, ntree = 100)
+x <- subset(data.test, select = -V1)
+y <- data.test$V1
+pred <- predict(rf, x)
+```
+
+```{r}
+mean(pred == y) * 100
+table(pred, y)
+```
+
+### 인공신경망
+
+```{r}
+rf2 <- nnet(V1 ~ ., data = data.train, size = 2)
+pred2 <- predict(rf2, x, type = "class")
+```
+
+```{r}
+mean(pred2 == y) * 100
+table(pred2, y)
+```
+
+### SVM
+
+```{r}
+rf3 <- svm(V1 ~ ., data = data.train)
+pred3 <- predict(rf3, x, type="class")
+```
+
+```{r}
+mean(pred3 == y) * 100
+table(pred3, y)
+```

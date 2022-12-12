@@ -1,0 +1,371 @@
+```{r}
+library(nnet)
+library(dplyr)
+library(randomForest)
+library(e1071)
+library(caret)
+```
+
+```{r}
+train_df <- read.csv("./Data/Titanic_train.csv")
+train_df <- arrange(train_df, Survived)
+head(train_df)
+```
+
+# 1. Survived와 Death의 비중을 동일하게 하여 예측력 구해보
+
+```{r}
+train_df_sameRatio <- train_df[c(1:342,550:891),]
+target_col <- c("Survived","Sex","Pclass","Embarked")
+```
+
+```{r}
+table(train_df_sameRatio$Survived)
+head(train_df_sameRatio[,target_col])
+```
+
+```{r}
+train_df_sameRatio$SexCode[train_df_sameRatio$Sex=="male"] <- 0
+train_df_sameRatio$SexCode[train_df_sameRatio$Sex=="female"] <- 1
+head(train_df_sameRatio)
+```
+
+```{r}
+train_df_sameRatio <- subset(train_df_sameRatio, select=-Sex)
+head(train_df_sameRatio)
+```
+
+```{r}
+target_col <- c("Survived","SexCode","Pclass","Embarked")
+head(train_df_sameRatio[,target_col])
+```
+
+```{r}
+train_df_sameRatio$Embarked_C = train_df_sameRatio$Embarked == "C"
+train_df_sameRatio$Embarked_S = train_df_sameRatio$Embarked == "S"
+train_df_sameRatio$Embarked_Q = train_df_sameRatio$Embarked == "Q"
+target_col = c("Survived","Pclass","SexCode","Embarked_C","Embarked_S","Embarked_Q")
+```
+
+### RandomForest
+
+```{r}
+samp <- createDataPartition(train_df_sameRatio$Survived, p=0.7, list=F)
+data.train1 <- train_df_sameRatio[samp,]
+data.test1 <- train_df_sameRatio[-samp,]
+```
+
+```{r}
+train_data1 <- data.train1[target_col]
+head(train_data1)
+```
+
+```{r}
+test_data1 <- data.test1[target_col]
+```
+
+```{r}
+rf1_1 <- randomForest(Survived ~ ., data = train_data1, ntree = 100)
+x1 <- subset(test_data1, select = -Survived)
+y1 <- test_data1$Survived
+pred1_1 <- predict(rf1_1, x1)
+head(pred1_1)
+```
+
+```{r}
+pred1_1[pred1_1 <= 0.5] <- 0
+pred1_1[pred1_1 > 0.5] <- 1
+head(pred1_1)
+```
+
+```{r}
+mean(pred1_1 == y1) * 100
+table(pred1_1, y1)
+```
+
+### 인공신경망
+
+```{r}
+rf1_2 <- nnet(Survived ~ ., data = train_data1, size = 3)
+pred1_2 <- predict(rf1_2, x1)
+head(pred1_2)
+```
+
+```{r}
+pred1_2[pred1_2 <= 0.5] <- 0
+pred1_2[pred1_2 > 0.5] <- 1
+head(pred1_2)
+```
+
+```{r}
+mean(pred1_2 == y1) * 100
+table(pred1_2, y1)
+```
+
+### SVM
+
+```{r}
+rf1_3 <- svm(Survived ~ ., data = train_data1)
+pred1_3 <- predict(rf1_3, x1)
+head(pred1_3)
+```
+
+```{r}
+pred1_3[pred1_3 <= 0.5] <- 0
+pred1_3[pred1_3 > 0.5] <- 1
+head(pred1_3)
+```
+
+```{r}
+mean(pred1_3 == y1) * 100
+table(pred1_3, y1)
+```
+
+# 2. Fare를 추가하여 예측해 보기
+
+```{r}
+target_col2 <- c("Survived","SexCode","Pclass","Embarked","Fare")
+```
+
+```{r}
+train_data2 <- data.train1[target_col2]
+head(train_data2)
+test_data2 <- data.test1[target_col2]
+```
+
+### RandomForest
+
+```{r}
+rf2_1 <- randomForest(Survived ~ ., data = train_data2, ntree = 100)
+x2 <- subset(test_data2, select = -Survived)
+y2 <- test_data2$Survived
+pred2_1 <- predict(rf2_1, x2)
+head(pred2_1)
+```
+
+```{r}
+pred2_1[pred2_1 <= 0.5] <- 0
+pred2_1[pred2_1 > 0.5] <- 1
+head(pred2_1)
+```
+
+```{r}
+mean(pred2_1 == y2) * 100
+table(pred2_1, y2)
+```
+
+### 인공신경망
+
+```{r}
+rf2_2 <- nnet(Survived ~ ., data = train_data2, size = 3)
+pred2_2 <- predict(rf2_2, x2)
+head(pred2_2)
+```
+
+```{r}
+pred2_2[pred2_2 <= 0.5] <- 0
+pred2_2[pred2_2 > 0.5] <- 1
+head(pred2_2)
+```
+
+```{r}
+mean(pred2_2 == y2) * 100
+table(pred2_2, y2)
+```
+
+### SVM
+
+```{r}
+rf2_3 <- svm(Survived ~ ., data = train_data2)
+pred2_3 <- predict(rf2_3, x2)
+head(pred2_3)
+```
+
+```{r}
+pred2_3[pred2_3 <= 0.5] <- 0
+pred2_3[pred2_3 > 0.5] <- 1
+head(pred2_3)
+```
+
+```{r}
+mean(pred2_3 == y2) * 100
+table(pred2_3, y2)
+```
+
+# 3. Age를 추가하여 예측해 보기
+
+```{r}
+target_col3 <- c("Survived","SexCode","Pclass","Embarked","Age")
+```
+
+```{r}
+train_data3 <- subset(data.train1, !is.na(Age))[target_col3]
+test_data3 <- subset(data.test1, !is.na(Age))[target_col3]
+head(train_data3)
+```
+
+### RandomForest
+
+```{r}
+rf3_1 <- randomForest(Survived ~ ., data = train_data3, ntree = 100)
+x3 <- subset(test_data3, select = -Survived)
+y3 <- test_data3$Survived
+pred3_1 <- predict(rf3_1, x3)
+head(pred3_1)
+```
+
+```{r}
+pred3_1[pred3_1 <= 0.5] <- 0
+pred3_1[pred3_1 > 0.5] <- 1
+head(pred3_1)
+```
+
+```{r}
+mean(pred3_1 == y3) * 100
+table(pred3_1, y3)
+```
+
+### 인공신경망
+
+```{r}
+rf3_2 <- nnet(Survived ~ ., data = train_data3, size = 3)
+pred3_2 <- predict(rf3_2, x3)
+head(pred3_2)
+```
+
+```{r}
+pred3_2[pred3_2 <= 0.5] <- 0
+pred3_2[pred3_2 > 0.5] <- 1
+head(pred3_2)
+```
+
+```{r}
+mean(pred3_2 == y3) * 100
+table(pred3_2, y3)
+```
+
+### SVM
+
+```{r}
+rf3_3 <- svm(Survived ~ ., data = train_data3)
+pred3_3 <- predict(rf3_3, x3)
+head(pred3_3)
+```
+
+```{r}
+pred3_3[pred3_3 <= 0.5] <- 0
+pred3_3[pred3_3 > 0.5] <- 1
+head(pred3_3)
+```
+
+```{r}
+mean(pred3_3 == y3) * 100
+table(pred3_3, y3)
+```
+
+# 4. Fare, Age를 추가하여 예측해 보기
+
+```{r}
+target_col4 <- c("Survived","SexCode","Pclass","Embarked","Fare","Age")
+```
+
+```{r}
+train_data4 <- subset(data.train1, !is.na(Age))[target_col4]
+test_data4 <- subset(data.test1, !is.na(Age))[target_col4]
+head(train_data4)
+```
+
+### RandomForest
+
+```{r}
+rf4_1 <- randomForest(Survived ~ ., data = train_data4, ntree = 100)
+x4 <- subset(test_data4, select = -Survived)
+y4 <- test_data4$Survived
+pred4_1 <- predict(rf4_1, x4)
+head(pred4_1)
+```
+
+```{r}
+pred4_1[pred4_1 <= 0.5] <- 0
+pred4_1[pred4_1 > 0.5] <- 1
+head(pred4_1)
+```
+
+```{r}
+mean(pred4_1 == y4) * 100
+table(pred4_1, y4)
+```
+
+### 인공신경망
+
+```{r}
+rf4_2 <- nnet(Survived ~ ., data = train_data4, size = 3)
+pred4_2 <- predict(rf4_2, x4)
+head(pred4_2)
+```
+
+```{r}
+pred4_2[pred4_2 <= 0.5] <- 0
+pred4_2[pred4_2 > 0.5] <- 1
+head(pred4_2)
+```
+
+```{r}
+mean(pred4_2 == y4) * 100
+table(pred4_2, y4)
+```
+
+### SVM
+
+```{r}
+rf4_3 <- svm(Survived ~ ., data = train_data4)
+pred4_3 <- predict(rf4_3, x4)
+head(pred4_3)
+```
+
+```{r}
+pred4_3[pred4_3 <= 0.5] <- 0
+pred4_3[pred4_3 > 0.5] <- 1
+head(pred4_3)
+```
+
+```{r}
+mean(pred4_3 == y4) * 100
+table(pred4_3, y4)
+```
+
+# 5. Age를 연령대로 구분하여 예측해 보기
+
+```{r}
+train_data5 <- train_data3
+test_data5 <- test_data3
+head(train_data5)
+```
+
+```{r}
+for (i in seq(0,90,10)) {
+  train_data5 <- cbind(train_data5, train_data5$Age >= i & train_data5$Age < (i+10))
+  test_data5 <- cbind(test_data5, test_data5$Age >= i & test_data5$Age < (i+10))
+}
+colnames(train_data5) <- c("Survived","SexCode","Pclass","Embarked","Age",seq(0,90,10))
+colnames(test_data5) <- c("Survived","SexCode","Pclass","Embarked","Age",seq(0,90,10))
+
+train_data5 <- subset(train_data5, select=-Age)
+test_data5 <- subset(test_data5, select=-Age)
+
+head(train_data5)
+```
+
+### RandomForest
+
+```{r}
+rf5_1 <- randomForest(Survived ~ ., data = train_data5, ntree = 100)
+x5 <- subset(test_data5, select = -Survived)
+y5 <- test_data5$Survived
+pred5_1 <- predict(rf5_1, x5)
+head(pred5_1)
+```
+
+# 6. 국가별로 구분하여 예측해 보기
+
+# 7. Fare를 분류하여 예측해 보기

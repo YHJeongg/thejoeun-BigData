@@ -1,0 +1,93 @@
+# 교통사고 예측하기 (회귀식과 RandomForest 예측 비교)
+
+```{r}
+seoul <- read.csv("./Data/newSeoul2019.csv")
+head(seoul)
+```
+
+### 종로구 데이터셋 만들기
+
+```{r}
+JongRo <- subset(seoul, 자치구명=="종로구")
+summary(JongRo)
+nrow(JongRo) 
+```
+
+### rownames()정리
+
+```{r}
+rownames(JongRo) <- c()
+tail(JongRo)
+```
+
+### 종로구의 발생건수와 부상자수의 상관계수
+
+```{r}
+cor(JongRo$발생건수,JongRo$부상자수) 
+```
+
+### 종로구의 발생건수와 부상자수의 산포도 및 회귀선 그리기
+
+```{r}
+par(family="AppleGothic")
+plot(JongRo$부상자수~JongRo$발생건수,
+     main = "종로구의 발생건수와 부상자수의 산포도",
+     ylab = "부상자수",
+     xlab = "발생건수"
+     )
+
+r <- lm(JongRo$부상자수~JongRo$발생건수)
+abline(r, col="red")
+```
+
+### 예측율
+
+0.8466
+
+```{r}
+summary(r)
+```
+
+### 회귀식
+
+```{r}
+r
+```
+
+부상자수 = 1.360 \* 발생건수
+
+### 회귀식으로 발생건수가 100건일때의 부상자수 예측
+
+```{r}
+1.360 * 100
+paste(1.360 * 100 - 9.816, "~", 1.360 * 100 + 9.816)
+```
+
+```{r}
+rf <- randomForest(부상자수 ~ 발생건수, data = JongRo, ntree = 100)
+pred <- predict(rf, list(발생건수=100))
+pred
+```
+
+### 발생건수가 145건일경우 비교
+
+```{r}
+1.360 * 145
+paste(1.360 * 145 - 9.816, "~", 1.360 * 145 + 9.816)
+pred2 <- predict(rf, list(발생건수=145))
+pred2
+```
+
+```{r}
+1.360 * 150
+paste(1.360 * 150 - 9.816, "~", 1.360 * 150 + 9.816)
+pred3 <- predict(rf, list(발생건수=150))
+pred3
+```
+
+```{r}
+1.360 * 200
+paste(1.360 * 200 - 9.816, "~", 1.360 * 200 + 9.816)
+pred4 <- predict(rf, list(발생건수=200))
+pred4
+```

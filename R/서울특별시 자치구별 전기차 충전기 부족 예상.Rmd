@@ -1,0 +1,365 @@
+# 서울특별시 자치구별 전기차 충전기 부족 예상
+
+### Data 불러오기
+
+```{r}
+library(readxl)
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+charging_station <- read.csv("./Data/서울시 전기차 급속충전기 정보 현황.csv", header = T, fileEncoding = "euc-kr")
+```
+
+```{r}
+electric_car <- read_excel("./Data/20_21년 자치구별 연료별 자동차 등록현황.xlsx")
+```
+
+```{r}
+head(charging_station)
+head(electric_car)
+```
+
+### Data 정리
+
+```{r}
+#electric_car <- data.frame(lapply(electric_car, function(x) {
+#                  gsub("서울특별시 ", "", x)
+#              }))
+```
+
+```{r}
+electric_car <- subset(electric_car, 연료 == "전기")
+rownames(electric_car) <- c()
+electric_car
+```
+
+```{r}
+car <- read_excel("./Data/20_21년 자치구별 연료별 자동차 등록현황.xlsx")
+car_sum <- aggregate(건수~연월,car,sum)
+car_sum
+```
+
+```{r}
+car2 <- read.csv("./Data/2019년 1월_12월 서울시 자치구별 연료별 자동차 등록현황.csv", header = T, fileEncoding = "euc-kr")
+car2
+```
+
+```{r}
+car2 <- subset(car2, 년월 == "2019-12")
+car_sum2 <- aggregate(계~년월,car2,sum)
+car_sum2
+```
+
+```{r}
+car2[,9] <- as.data.frame(as.numeric(car2[,9]))
+car2
+electric_car[,7] <- as.data.frame(as.numeric(electric_car[,7]))
+```
+
+```{r}
+names(car_sum2) <- names(car_sum)
+car_sum <- rbind(car_sum, car_sum2)
+
+car_sum
+```
+
+```{r}
+car_sum <- arrange(car_sum, 연월)
+car_sum[,2] <- as.data.frame(as.numeric(car_sum[,2]))
+car_sum
+```
+
+### 자동차 등록수 그래프
+
+```{r}
+par(family="AppleGothic")
+barplot((car_sum$건수/1000)~car_sum$연월,
+        main = "서울특별시 년별 자동차 등록수",
+        xlab = "년도",
+        ylab = "등록수(단위:1,000대)",
+        ylim = c(0,5000)
+        )
+```
+
+```{r}
+electric_car2 <- subset(car2, 연료별 == "전기")[,c(1:3,9)]
+electric_car2
+```
+
+```{r}
+electric_car19 <- aggregate(계~시군구별,electric_car2,sum)
+electric_car21 <- aggregate(건수~사용본거지시군구,electric_car21,sum)
+electric_car20 <- aggregate(건수~사용본거지시군구,electric_car20,sum)
+```
+
+```{r}
+electric_car21 <- subset(electric_car, 연월 == "202112")
+electric_car20 <- subset(electric_car, 연월 == "202012")
+```
+
+```{r}
+electric_car19 <- cbind(as.data.frame(rep(2019,nrow(electric_car19))),electric_car19)
+colnames(electric_car19) <- c("년월","자치구별","합계")
+electric_car19
+```
+
+```{r}
+electric_car20 <- cbind(as.data.frame(rep(2020,nrow(electric_car20))),electric_car20)
+colnames(electric_car20) <- c("년월","자치구별","합계")
+electric_car20
+```
+
+```{r}
+electric_car21 <- cbind(as.data.frame(rep(2021,nrow(electric_car21))),electric_car21)
+colnames(electric_car21) <- c("년월","자치구별","합계")
+electric_car21
+```
+
+```{r}
+electric_sum <- aggregate(합계~년월,electric_car19,sum)
+electric_sum <- rbind(electric_sum,aggregate(합계~년월,electric_car20,sum))
+electric_sum <- rbind(electric_sum,aggregate(합계~년월,electric_car21,sum))
+electric_sum
+```
+
+### 전기차 등록수 그래프
+
+```{r}
+par(family="AppleGothic")
+barplot((electric_sum$합계/100)~electric_sum$년월,
+        main = "서울특별시 년별 전기차 등록수",
+        xlab = "년도",
+        ylab = "등록수(단위:100대)",
+        ylim = c(0,500)
+        )
+```
+
+```{r}
+charging_station_borough <- aggregate(사용량.kWh.~시군구,charging_station,sum)
+charging_station_borough
+```
+
+```{r}
+par(family="AppleGothic")
+barplot((charging_station_borough$사용량.kWh./1000)~charging_station_borough$시군구,
+        main = "서울특별시 자치구별 충전량",
+        xlab = "자치구",
+        ylab = "충전량(단위:1000kWh)",
+        ylim = c(0,2000),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        col = rainbow(nrow(charging_station_borough))
+        )
+```
+
+```{r}
+aggregate(cbind(X50KW,X100KW싱글,X100KW듀얼,X200KW듀얼,X300KW이상)~시군구,charging_station,sum)
+tail(charging_station)
+```
+
+### 급속 충전기수 구하기
+
+```{r}
+charger <- c()
+for (i in 1:nrow(charging_station)) {
+  charger <- rbind(charger,sum(charging_station[i,3:7]))
+}
+charger <- as.data.frame(charger)
+colnames(charger) = "급속충전기수"
+charger
+```
+
+```{r}
+charging_station <- cbind(charging_station,charger)
+charging_station
+
+charger_sum <- aggregate(급속충전기수~시군구,charging_station,sum)
+```
+
+### 자치구별 급속충전기 수
+
+```{r}
+par(family="AppleGothic")
+barplot(charger_sum$급속충전기수~charger_sum$시군구,
+        main = "서울특별시 자치구별 급속충전기 수",
+        xlab = "자치구",
+        ylab = "급속충전기 수",
+        ylim = c(0,100),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        col = rainbow(nrow(charger_sum))
+        )
+```
+
+```{r}
+plot(charging_station_borough$사용량.kWh.,electric_car_total$합계)
+```
+
+```{r}
+electric_car21$합계/charger_sum$급속충전기수
+
+charger_persent <- as.data.frame(cbind(electric_car21$자치구별,round(charging_station_borough$사용량.kWh. / 100 / charger_sum$급속충전기수/electric_car_total$합계 * 100, 2)))
+
+charger_persent[,2] <- as.numeric(charger_persent[,2])
+
+charger_persent
+```
+
+### 자치구별 평균 충전% (전기차 1대당)
+
+```{r}
+par(family="AppleGothic")
+barplot(charger_persent$V2~charger_persent$V1,
+        main = "자치구별 전기차 1대당 평균 충전 퍼센트",
+        ylim = c(0,50),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        xlab = "자치구별",
+        ylab = "충전 퍼센트",
+        col = rainbow(nrow(recharge))
+        )
+```
+
+```{r}
+electric_car_total <- rbind(electric_car21,electric_car20)
+electric_car_total <- rbind(electric_car_total, electric_car19)
+electric_car_total <- aggregate(합계~자치구별,electric_car_total[,2:3],sum)
+electric_car_total
+```
+
+```{r}
+as.data.frame(electric_car_total$합계 * (charger_persent$V2 / 100))
+```
+
+```{r}
+as.data.frame(aggregate(사용량.kWh.~시군구,charging_station,sum)$사용량.kWh. / (electric_car_total$합계 * 70))
+```
+
+```{r}
+0.0154 * 19862
+39.2
+
+
+(39.2 / (429 / 70))
+70 / 6.39627
+
+
+as.data.frame(electric_car_total$합계 * (charger_persent$V2 / 100)) / 6.39627
+```
+
+```{r}
+drive_day <- as.data.frame(cbind(electric_car_total$자치구별, as.data.frame(electric_car_total$합계 * (charger_persent$V2 / 100)) / 6.39627))
+colnames(drive_day) <- c("자치구별","평균주행가능일")
+drive_day
+```
+
+### 평균 주행가능 일 (전기차 1대당)
+
+```{r}
+par(family="AppleGothic")
+barplot(drive_day$평균주행가능일~drive_day$자치구별,
+        main = "평균주행가능일",
+        ylim = c(0,100),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        xlab = "자치구별",
+        ylab = "평균주행가능일",
+        col = rainbow(nrow(drive_day))
+        )
+```
+
+### 자치구별 전력 사용량 (전기차 충전소)
+
+```{r}
+par(family="AppleGothic")
+barplot((recharge$사용량.kWh./1000)~recharge$시군구,
+        main = "자치구별 충전소 전력 사용량",
+        ylim = c(0,2000),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        xlab = "자치구별",
+        ylab = "충전소 전력 사용량(단위:1000kWh)",
+        col = rainbow(nrow(recharge))
+        )
+```
+
+```{r}
+recharge <- as.data.frame(aggregate(사용량.kWh.~시군구,charging_station,sum))
+
+recharge
+```
+
+```{r}
+median(drive_day$평균주행가능일)
+
+drive_min <- subset(drive_day, 평균주행가능일 < 40.19)
+test <- round(subset(drive_day, 평균주행가능일 < 40.19)$평균주행가능일, 2) * 6.39
+drive_min <- cbind(drive_min,충전량 = test)
+```
+
+```{r}
+cbind(drive_min,(40.19 - round(subset(drive_day, 평균주행가능일 < 40.19296)$평균주행가능일, 2) * 6.39))
+```
+
+```{r}
+256.81 - drive_min$충전량
+
+40.19 * 6.39
+```
+
+```{r}
+drive_min
+
+electric_car_total
+charging_station_borough
+```
+
+```{r}
+drive_min <- cbind(drive_min, 부족한충전량=(256.8141 - drive_min$충전량))
+rownames(drive_min) <- c()
+drive_min
+```
+
+### 자치구별 부족한 충전기 수 구하기
+
+```{r}
+drive_min <- cbind(drive_min, 부족한충전기수 = (ceiling(drive_min$부족한충전량 / 100)))
+drive_min
+```
+
+```{r}
+par(family="AppleGothic")
+barplot(drive_min$부족한충전기수~drive_min$자치구별,
+        main = "자치구별 충전기 부족 수",
+        ylim = c(0,3),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        xlab = "자치구별",
+        ylab = "충전기 수",
+        col = rainbow(nrow(drive_min))
+        )
+```
+
+### 자치구별 전기차 등록수
+
+```{r}
+par(family="AppleGothic")
+barplot((electric_car_total$합계/100)~electric_car_total$자치구별,
+        main = "자치구별 전기차 등록수",
+        ylim = c(0,300),
+        las = 2,
+        cex.axis = 0.6,
+        cex.name = 0.6,
+        xlab = "자치구별",
+        ylab = "전기차 등록수(단위:100대)",
+        col = rainbow(nrow(electric_car_total))
+        )
+```

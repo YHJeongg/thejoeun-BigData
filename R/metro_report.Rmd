@@ -1,0 +1,179 @@
+```{r}
+metro <- read.csv("./Data/metro_total_1992_2020.csv")
+```
+
+```{r}
+population <- read.csv("./Data/population_1960_2020.csv")
+```
+
+```{r}
+metro
+```
+
+```{r}
+newMetro <- merge(metro, population[33:nrow(population),], by="년도")
+
+rownames(newMetro) <- c()
+tail(newMetro)
+```
+
+```{r}
+par(family="AppleGothic")
+barplot((newMetro$총인구/1000)~newMetro$년도,
+        ylim = c(0,60000),
+        xlab = "년도",
+        ylab = "인구수(단위:천명)",
+        cex.axis = 0.6
+        )
+```
+
+```{r}
+par(family="AppleGothic")
+plot(newMetro$총인구,newMetro$서울특별시,
+     main = "총 인구증가에 따른 수도권 인구 변화",
+     type = "l",
+     ylim = c(0, 15000000),
+     col = "red",
+     cex.axis = 0.8,
+     xlab = "총 인구(단위:명)",
+     ylab = "수도권 인구(단위:명)"
+     )
+lines(newMetro$총인구,newMetro$인천광역시,
+      type = "l",
+      col = "blue"
+      )
+lines(newMetro$총인구,newMetro$경기도,
+      type = "l",
+      col = "orange"
+      )
+legend(49800000,9000000,
+      c("서울특별시","인천광역시","경기도"),
+      fill = c("red","blue","orange"),
+      cex = 0.7
+      )
+
+```
+
+```{r}
+par(family="AppleGothic")
+
+week <- c("수도권","비수도권")
+ratio <- round(total / sum(total) * 100, 2)
+label <- paste(week, "\n", ratio, "%")
+
+pie3D(total,
+    main = "수도권, 비수도권 인구 비율(2020년)",
+    col = rainbow(length(total)),
+    labels = label,
+    labelcex = 1
+    )
+```
+
+```{r}
+gibang <- sum(metro[29,-c(1,2,3,6,11)])
+sudo <- sum(metro[29,c(3,6,11)])
+
+total <- c(sudo,gibang)
+```
+
+```{r}
+par(family="AppleGothic")
+plot((newMetro$서울특별시/10000)~newMetro$년도,
+        ylim = c(0,1500),
+        xlab = "년도",
+        ylab = "인구수(단위:만명)",
+        cex.axis = 1,
+        col = "red",
+        pch = 1,
+        type = "o",
+        )
+lines((newMetro$부산광역시/10000)~newMetro$년도,
+  col = "blue",
+  type = "o",
+  pch = 2
+)
+lines((newMetro$대구광역시/10000)~newMetro$년도,
+  col = "green",
+  type = "o",
+  pch = 3
+)
+lines((newMetro$인천광역시/10000)~newMetro$년도,
+  col = "orange",
+  type = "o",
+  pch = 4
+)
+lines((newMetro$광주광역시/10000)~newMetro$년도,
+  col = "skyblue",
+  type = "o",
+  pch = 5
+)
+lines((newMetro$대전광역시/10000)~newMetro$년도,
+  col = "purple",
+  type = "o",
+  pch = 6
+)
+
+legend(2015,1500,
+       c("서울특별시","부산광역시","대구광역시","인천광역시","광주광역시","대전광역시"),
+       col = c("red","blue","green","orange","skyblue","purple"),
+       pch = c(1,2,3,4,5,6),
+       cex = 0.5
+)
+```
+
+```{r}
+newMetro
+```
+
+```{r}
+par(family="AppleGothic")
+plot((newMetro$경기도/10000)~newMetro$년도,
+        ylim = c(0,1500),
+        xlab = "년도",
+        ylab = "인구수(단위:만명)",
+        cex.axis = 1,
+        col = "red",
+        pch = 1,
+        type = "o",
+        )
+lines((newMetro$충청북도/10000)~newMetro$년도,
+  col = "blue",
+  type = "o",
+  pch = 2
+)
+lines((newMetro$충청남도/10000)~newMetro$년도,
+  col = "green",
+  type = "o",
+  pch = 3
+)
+lines((newMetro$전라북도/10000)~newMetro$년도,
+  col = "orange",
+  type = "o",
+  pch = 4
+)
+lines((newMetro$전라남도/10000)~newMetro$년도,
+  col = "skyblue",
+  type = "o",
+  pch = 5
+)
+lines((newMetro$경상북도/10000)~newMetro$년도,
+  col = "purple",
+  type = "o",
+  pch = 6
+)
+lines((newMetro$경상남도/10000)~newMetro$년도,
+  col = "black",
+  type = "o",
+  pch = 7
+)
+legend(2015,1000,
+       c("경기도","충청북도","충청남도","전라북도","전라남도","경상북도","경상남도"),
+       col = c("red","blue","green","orange","skyblue","purple","black"),
+       pch = c(1,2,3,4,5,6,7),
+       cex = 0.6
+)
+```
+
+```{r}
+cor(newMetro$서울특별시,newMetro$경기도) * 100
+```

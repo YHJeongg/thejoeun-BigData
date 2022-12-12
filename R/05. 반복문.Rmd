@@ -1,0 +1,152 @@
+# For 문
+
+```{r}
+for(i in 1:10) {
+  print(i)
+}
+```
+
+```{r}
+for(i in c(1,3,5)) {
+  print(i)
+}
+```
+
+1 \~ 100까지의 홀수만 출력하기
+
+```{r}
+for(i in seq(1,100,2)) {
+  print(i)
+}
+```
+
+```{r}
+for(i in 1:10) {
+  cat(i, " => ", sqrt(i), "\n")
+}
+```
+
+1부터 100까지의 짝수의 합계 구하기
+
+```{r}
+data <- 1:100
+sum <- 0
+for (i in seq(min(data) + 1, max(data), 2)) {
+  sum <- sum(sum, i)
+}
+cat(min(data), "부터 ", max(data), "까지의 짝수의 합은", sum, "입니다.")
+```
+
+```{r}
+excel <- read.csv("./Data/excel.csv")
+head(excel)
+```
+
+```{r}
+data <- excel$q3
+sumEven <- sumOdd <- 0
+
+for(i in data) {
+  if(i %% 2 == 0) {
+    sumEven <- sumEven + i
+  } else {
+    sumOdd <- sumOdd + i
+  }
+}
+
+cat("홀수의 합은 ", sumOdd, "이고 짝수의 합은 ", sumEven, "입니다.")
+```
+
+```{r}
+for(i in 1:9) {
+  cat("2 x", i, "=", 2 * i, "\n")
+}
+```
+
+```{r}
+gugu <- function() {
+  for(i in 1:9) {
+    cat("2 x", i, "=", 2 * i, "\n")
+  }
+}
+```
+
+```{r}
+gugu()
+```
+
+```{r}
+gugu2 <- function(k) {
+  for(i in 1:9) {
+    cat(k, "x", i, "=", k * i, "\n")
+  }
+}
+gugu2(4)
+```
+
+```{r}
+gugu3 <- function(k, j) {
+  for(i in 1:j) {
+    cat(k, "x", i, "=", k * i, "\n")
+  }
+}
+gugu3(4, 12)
+```
+
+```{r}
+for(i in seq(2,8,2)) {
+  for(j in seq(2,8,2)) {
+    cat(i, "x", j, "=", j * i, "\n")
+  }
+  cat("--------------\n")
+}
+```
+
+```{r}
+score <- c(85, 95, 89)
+name <- c("유비", "관우", "장비")
+
+j <- 1
+for(i in score) {
+  cat(name[j], ":", i, "\n")
+  j = j+1
+}
+```
+
+```{r}
+cat(paste(name, ":", score, "\n"), sep = "")
+```
+
+# While
+
+```{r}
+i <- 0
+while(i < 10) {
+  i = i + 1
+  print(i)
+}
+```
+
+```{r}
+i <- 0
+while(T) {
+  i = i + 1
+  print(i)
+  if(i > 9) {
+    break
+  }
+}
+```
+
+# Repeat
+
+```{r}
+i <- 0
+repeat {
+  i = i + 1
+  if(i > 10) {
+    break
+  }
+  print(i)
+}
+```

@@ -1,0 +1,358 @@
+# 파일 입출력
+
+```{r}
+no <- 1:4
+name <- c("Apple","Banana","Peach","Berry")
+price <- c(500,200,200,50)
+qty <- c(5,4,3,2)
+```
+
+```{r}
+fruit <- data.frame(번호 = no, 제품 = name, 금액 = price, 수량 = qty)
+fruit
+```
+
+### csv로 저장하기
+
+```{r}
+write.csv(fruit, "./Data/fruit.csv", row.names = F)
+```
+
+```{r}
+read.csv("./Data/fruit.csv")
+```
+
+# 세계 GDP순위 데이터 정제 및 차트 만들기
+
+```{r}
+GDP_ranking <- read.csv("./Data/GDP.csv")
+GDP_ranking
+```
+
+```{r}
+GDP_ranking2 <- GDP_ranking[-c(1:4),c(1,2,4,5)]
+head(GDP_ranking2)
+```
+
+### 상위 15개국만 선별한다.
+
+```{r}
+GDP_ranking15 <- head(GDP_ranking2,15)
+GDP_ranking15
+```
+
+### 컬럼 이름 정의
+
+```{r}
+colnames(GDP_ranking15) <- c("Code", "Ranking", "Nation", "GDP")
+GDP_ranking15
+```
+
+### rownames 새로 구성하기
+
+```{r}
+rownames(GDP_ranking15) <- c()
+tail(GDP_ranking15)
+```
+
+### 구조 확인하기
+
+```{r}
+str(GDP_ranking15)
+```
+
+### GDP 숫자로 변경
+
+```{r}
+GDP_ranking15$GDP <- as.numeric(str_replace_all(GDP_ranking15$GDP, ",", ""))
+GDP_ranking15
+```
+
+### 막대 그래프 그리기
+
+```{r}
+par(family="AppleGothic") # 한글 보이기
+
+barplot(GDP_ranking15$GDP, # GDP 상위 15개국 DATA
+        col = rainbow(nrow(GDP_ranking15)), 
+        main = "2018년 GDP 세계 15위 국가",
+        xlab = "국가(nation)",
+        ylab = "단위($)",
+        names = GDP_ranking15$Code,
+        cex.names = 0.7
+        )
+```
+
+미국과 중국 한국만 빨간색으로 표시하고 나머지 국가는 파란색으로 표시하기
+
+```{r}
+par(family="AppleGothic")
+
+barplot(GDP_ranking15$GDP, # GDP 상위 15개국 DATA
+        col = c(rep("red",2),rep("blue",9),"red",rep("blue",3)), 
+        main = "2018년 GDP 세계 15위 국가",
+        xlab = "국가(nation)",
+        ylab = "단위($)",
+        names = GDP_ranking15$Code,
+        cex.names = 0.7
+        )
+```
+
+달러 단위를 천단위로 표시하기
+
+```{r}
+par(family="AppleGothic")
+
+barplot(GDP_ranking15$GDP / 1000, # GDP 상위 15개국 DATA
+        col = c(rep("red",2),rep("blue",9),"red",rep("blue",3)), 
+        main = "2018년 GDP 세계 15위 국가",
+        xlab = "국가(nation)",
+        ylab = "단위(1000$)",
+        names = GDP_ranking15$Code,
+        cex.names = 0.7
+        )
+```
+
+천단위 달러가 3000이상인 국가만 빨간색으로 표시하고 나머지는 파란색으로 표시하기
+
+```{r}
+par(family="AppleGothic")
+
+barplot(GDP_ranking15$GDP / 1000, # GDP 상위 15개국 DATA
+        col = ifelse((GDP_ranking15$GDP / 1000) >= 3000, "red","blue"
+        ), 
+        main = "2018년 GDP 세계 15위 국가",
+        xlab = "국가(nation)",
+        ylab = "단위(1000$)",
+        names = GDP_ranking15$Code,
+        cex.names = 0.7
+        )
+```
+
+# 데이터 처리
+
+```{r}
+install.packages('dplyr')
+library(dplyr)
+```
+
+### Sepal.Length기준으로 오름차순 정렬하기
+
+```{r}
+head(arrange(iris, Sepal.Length))
+```
+
+### Sepal.Length기준으로 오름차순 정렬후 1열과 2열만 보기
+
+```{r}
+head(arrange(iris[,1:2], Sepal.Length))
+```
+
+```{r}
+head(arrange(iris, Sepal.Length, Petal.Length))
+```
+
+```{r}
+head(arrange(iris, desc(Sepal.Length)))
+```
+
+```{r}
+irisSamp <- iris[sample(1:nrow(iris), nrow(iris)*0.7),]
+irisSamp
+```
+
+```{r}
+table(irisSamp$Species)
+```
+
+```{r}
+samp <- c(sample(1:50, 35),sample(51:100, 35),sample(101:150, 35))
+samp
+```
+
+```{r}
+irisSamp <- iris[samp,]
+table(irisSamp$Species)
+```
+
+```{r}
+# Train Data
+iris.train <- iris[samp,]
+iris.test <- iris[-samp,]
+```
+
+```{r}
+summary(iris.train)
+```
+
+```{r}
+summary(iris.test) 
+```
+
+```{r}
+set.seed(1234)
+samp <- c(sample(1:50, 35),sample(51:100, 35),sample(101:150, 35))
+samp
+```
+
+```{r}
+iris_setosa <- subset(iris, Species=='setosa')
+iris_setosa
+```
+
+```{r}
+str(iris_setosa)
+```
+
+### Factor 조정하기
+
+```{r}
+iris_setosa$Species <- factor(iris_setosa$Species)
+str(iris_setosa)
+```
+
+iris에서 Species가 versicolor인것만 추출하여 iris_versicolor라는 데이터프레임을 만들고 조정하기
+
+```{r}
+iris_versicolor <- subset(iris, Species=='versicolor')
+iris_versicolor$Species <- factor(iris_versicolor$Species)
+str(iris_versicolor)
+```
+
+iris에서 Species가 setosa이고 Sepal.Length가 5보다 큰 자료만 추출하여 정제하기
+
+```{r}
+subset(iris_setosa, Sepal.Length > 5)
+```
+
+# 그룹 연산 함수
+
+### 품종별로 Sepal.Width의 평균 구하기
+
+```{r}
+aggregate(Sepal.Width ~ Species, iris, mean)
+```
+
+# 서울 교통사고 조사 데이터셋
+
+데이터셋을 불러와서 seoul이라는 변수에 넣기
+
+```{r}
+seoul <- read.csv("./Data/newSeoul2019.csv")
+seoul
+```
+
+```{r}
+str(seoul)
+```
+
+### NA 확인
+
+```{r}
+sum(is.na(seoul))
+```
+
+```{r}
+for(i in 1:ncol(seoul)) {
+  cat("컬럼명 :", colnames(seoul[i]), "\tNA건수 :", sum(is.na(seoul[,i])),"\n")
+}
+```
+
+### 컬럼별 DATA 확인
+
+```{r}
+table(seoul$년도)
+```
+
+```{r}
+table(seoul$월)
+```
+
+```{r}
+table(seoul$자치구명)
+```
+
+```{r}
+length(unique(seoul$자치구명))
+```
+
+### 자치구별 발생건수의 편균
+
+```{r}
+regionAcc.mean <- aggregate(발생건수 ~ 자치구명, seoul, mean)
+head(regionAcc.mean)
+```
+
+```{r}
+arrange(regionAcc.mean, desc(발생건수))
+```
+
+### 자치구별 표준편차
+
+```{r}
+regionAcc.sd <- aggregate(발생건수 ~ 자치구명, seoul, sd)
+head(regionAcc.sd)
+```
+
+# 변동계수 = 표준편차 / 평균
+
+```{r}
+regionAcc.cv <- regionAcc.sd$발생건수 / regionAcc.mean$발생건수
+regionAcc.cv
+```
+
+```{r}
+regionAcc <- data.frame(자치구명=regionAcc.mean$자치구명, 변동계수=regionAcc.cv)
+regionAcc
+```
+
+```{r}
+arrange(regionAcc, (변동계수))
+```
+
+### 서울시 교통사고 부상자수에 대한 변동계수 구하기
+
+```{r}
+regionInjure.mean <- aggregate(부상자수 ~ 자치구명, seoul, mean)
+regionInjure.sd <- aggregate(부상자수 ~ 자치구명, seoul, sd)
+regionInjure.cv <- regionInjure.sd$부상자수 / regionInjure.mean$부상자수
+regionInjure <- data.frame(자치구명=regionInjure.mean$자치구명, 변동계수=regionInjure.cv)
+arrange(regionInjure, (변동계수))
+```
+
+```{r}
+regionDead.mean <- aggregate(사망자수 ~ 자치구명, seoul, mean)
+regionDead.sd <- aggregate(사망자수 ~ 자치구명, seoul, sd)
+regionDead.cv <- regionDead.sd$사망자수 / regionDead.mean$사망자수
+regionDead <- data.frame(자치구명=regionDead.mean$자치구명, 변동계수=regionDead.cv)
+arrange(regionDead, (변동계수))
+```
+
+# 상관계수
+
+```{r}
+cor(seoul$발생건수, seoul$부상자수)
+cor(seoul$발생건수, seoul$사망자수)
+```
+
+0 \~ 0.3 : 상관 없음
+
+0.3 \~ 0.5 : 약한 관계
+
+0.5 \~ 0.7 : 관계 있음
+
+0.7 \~ : 강한 관계
+
+```{r}
+cor(seoul$부상자수, seoul$사망자수)
+```
+
+```{r}
+par(family="AppleGothic")
+plot(seoul$발생건수, seoul$부상자수)
+```
+
+```{r}
+par(family="AppleGothic")
+plot(seoul$발생건수, seoul$사망자수)
+```

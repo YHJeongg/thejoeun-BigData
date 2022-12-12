@@ -1,0 +1,38 @@
+# 의사결정 나무(Decission Tree)
+
+```{r}
+library(party)
+library(caret)
+```
+
+### Sampling
+
+```{r}
+set.seed(1234)
+samp <- createDataPartition(iris$Species, p=0.7, list=F)
+samp
+```
+
+```{r}
+data.train <- iris[samp,]
+data.test <- iris[-samp,]
+```
+
+```{r}
+x <- subset(data.test, select=-Species)
+y <- data.test$Species
+```
+
+```{r}
+iris_tree <- ctree(Species ~ ., data = data.train)
+```
+
+```{r}
+pred <- predict(iris_tree, x)
+pred
+```
+
+```{r}
+mean(pred==y) * 100
+table(pred,y)
+```

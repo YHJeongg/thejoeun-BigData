@@ -1,0 +1,124 @@
+# 인공신경망
+
+지도학습 : 문제와 답을 알려주고 학습시킴
+
+비지도학습 : 문제만 주고 답을 알려주지않고 학습시킴
+
+강화학습 : 문제도 안주고 답도 안주고 학습시킴
+
+```{r}
+head(iris)
+```
+
+```{r}
+set.seed(1234)
+samp <- c(sample(1:50, 35), sample(51:100, 35), sample(101:150, 35))
+samp
+```
+
+학습용 데이터 생성
+
+```{r}
+data.train <- iris[samp,]
+```
+
+검증용 데이터 생성
+
+```{r}
+data.test <- iris[-samp,]
+```
+
+데이터 분류 확인하기
+
+```{r}
+summary(data.train)
+summary(data.test)
+```
+
+인공신경망으로 학습시키기
+
+```{r}
+library(nnet)
+```
+
+모델 만들기
+
+```{r}
+model.nnet <- nnet(Species ~ ., data = data.train, size = 3)
+# size : 은닉충 개수
+```
+
+문제 및 정답 만들기
+
+```{r}
+x <- subset(data.test, select = -Species)
+head(x)
+```
+
+```{r}
+y <- data.test$Species
+head(y)
+```
+
+검증(test)
+
+```{r}
+pred <- predict(model.nnet, x, type = "class")
+# type에 class는 객관식, raw는 주관식
+head(pred)
+```
+
+예측력 확인
+
+```{r}
+mean(pred == y) * 100
+```
+
+정오표 확인
+
+```{r}
+table(pred, y)
+```
+
+사용가능하다고 판단되면 모든데이터 기준으로 학습
+
+```{r}
+model.nnet <- nnet(Species ~ ., data = iris, size = 3)
+```
+
+Sepal.Length = 5.3
+
+Sepal.Width = 3.3
+
+Petal.Length = 1.6
+
+Petal.Width = 0.3
+
+```{r}
+x2 <- data.frame(5.3,3.3,1.6,0.3)
+colnames(x2) <- colnames(x)
+
+pred2 <- predict(model.nnet, x2, type = "class")
+pred2
+```
+
+Sepal.Length = 9.3
+
+Sepal.Width = 2.2
+
+Petal.Length = 7.5
+
+Petal.Width = 3.5
+
+```{r}
+predict(model.nnet, list(Sepal.Length = 9.3,
+                        Sepal.Width = 2.2,
+                        Petal.Length = 7.5,
+                        Petal.Width = 3.5),
+        type = "class"
+        )
+```
+
+```{r}
+help("nnet")
+```

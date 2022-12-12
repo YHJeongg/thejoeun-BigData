@@ -1,0 +1,73 @@
+# 기초 통계량
+
+```{r}
+# 밀가루
+flour <- c(3,-2,-1,0,1,-2)
+
+# 다이어트약
+diet <- c(-4,1,-3,-5,-2,-8)
+```
+
+```{r}
+total <- c(flour, diet)
+total
+```
+
+```{r}
+summary(total)
+```
+
+```{r}
+hist(total)
+```
+
+```{r}
+boxplot(total)
+```
+
+```{r}
+boxplot(flour,diet)
+```
+
+```{r}
+cor(flour,diet)
+```
+
+# 기초 통계량 산출
+
+```{r}
+cafe <- read.csv("./Data/coffee.csv")
+cafe
+```
+
+```{r}
+table(cafe$Coffee)
+```
+
+### 범위 빈도수
+
+```{r}
+coffee_range <- seq(0,60,10)
+table(cut(cafe$Coffee, breaks = coffee_range, right = F))
+```
+
+### 줄기잎 그래프
+
+```{r}
+stem(cafe$Coffee)
+```
+
+### 변동계수
+
+```{r}
+sd(cafe$Coffee) / mean(cafe$Coffee)
+sd(cafe$Fruit.Cup) / mean(cafe$Fruit.Cup)
+```
+
+```{r}
+sort(cafe$Fruit.Cup)
+```
+
+```{r}
+boxplot(cafe$Coffee, cafe$Fruit.Cup)
+```

@@ -1,0 +1,111 @@
+# 1880년 부터 2014년 까지의 미국의 아기이름을 정리해놓은 데이터셋
+
+```{r}
+baby <- read.csv("./Data/R_Baby_Names_1880-2014.csv")
+head(baby)
+tail(baby)
+```
+
+```{r}
+str(baby)
+```
+
+```{r}
+baby$Year <- substring(baby$Year,7,10)
+baby
+```
+
+### baby에서 여자 아이만 Female이라는 Dataset을 만들고 row수 구하기
+
+```{r}
+Female <- baby[baby$Gender=='F',]
+nrow(Female) 
+```
+
+### 여자 아이 이름 종류 계산
+
+```{r}
+length(unique(Female$Name))
+```
+
+### 여자 아이 이름중 가장 많이 사용된 이름과 Count 수 구하기
+
+```{r}
+arrange(aggregate(Count ~ Name, Female, sum), desc(Count))
+```
+
+### 1880 \~ 2014년 인구분포 현황
+
+```{r}
+FemaleCount <- aggregate(Count ~ Year,baby[baby$Gender=='F',],sum)
+MaleCount <- aggregate(Count ~ Year,baby[baby$Gender=='M',],sum)
+
+TotalCount <- merge(FemaleCount, MaleCount, by = "Year")
+colnames(TotalCount) <- c("Year", "Female", "Male")
+```
+
+```{r}
+plot(TotalCount$Female~TotalCount$Year,
+     ylim = c(0,2500000),
+     type = "l",
+     col = "orange",
+     xlab = "Year",
+     ylab = "Count",
+     cex.axis = 0.6,
+     )
+lines(TotalCount$Male~TotalCount$Year,
+      type = "l",
+      col = "blue"
+      )
+```
+
+```{r}
+trafficAccident <- read.table("./Data/trafficAccident_2011_2019.txt", header = T)
+
+trafficAccident <- data.frame(lapply(trafficAccident, function(x) {
+                  gsub("-", "0", x)
+              }))
+```
+
+```{r}
+trafficAccident <- subset(trafficAccident,자치구별!="합계")
+
+length(unique(trafficAccident$기간))
+length(unique(trafficAccident$자치구별))
+
+trafficAccident
+```
+
+```{r}
+test1 <- data.frame(cbind(1:12,t(trafficAccident[1:3,5:ncol(trafficAccident)]),trafficAccident[1:3,1],trafficAccident[1:3,2]))
+colnames(test1) = c("월","발생건수","사망자수","부상자수","년도","자치구명")
+  
+for(j in seq(4,673,3)) {
+
+  test2 <- data.frame(cbind(1:12,t(trafficAccident[j:(j+2),5:ncol(trafficAccident)]),trafficAccident[j:(j+2),1],trafficAccident[j:(j+2),2]))
+  
+  names(test2) <- names(test1)
+  
+  test1 <- data.frame(rbind(test1,test2))
+}
+  
+rownames(test1) = NULL
+trafficAccidentEnd <- test1[,c(5,1,6,2,3,4)]
+trafficAccidentEnd
+```
+
+```{r}
+for(i in 4:ncol(trafficAccidentEnd)) {
+  trafficAccidentEnd[,i] <- as.integer(trafficAccidentEnd[,i])
+}
+
+trafficAccidentEnd
+```
+
+```{r}
+read.csv("./Data/newSeoul2019.csv")
+```
+
+```{r}
+setdiff(read.csv("./Data/newSeoul2019.csv"), trafficAccidentEnd)
+```

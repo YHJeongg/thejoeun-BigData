@@ -1,0 +1,110 @@
+# 몬테카를로 시뮬레이션
+
+동전의 앞면 뒷면 시뮬레이션
+
+```{r}
+x <- runif(1)
+if(x <= 1/2) {
+  result = 0 # Front
+} else {
+  result = 1 # Rear
+}
+print(result)
+```
+
+```{r}
+coin <- function(n) {
+  count1 = 0
+  count2 = 0
+  
+  for (i in 1:n) {
+    if(runif(1) <= 1/2) {
+      count1 = count1 + 1
+    } else {
+      count2 = count2 + 1
+    }
+  }
+  cat("앞면 :", count1, "\n")
+  cat("뒷면 :", count2, "\n")
+  cat("----------------\n")
+}
+
+coin(10)
+coin(100)
+coin(1000)
+coin(10000)
+coin(100000)
+```
+
+# 가위, 바위, 보
+
+```{r}
+rock <- function(n) {
+  scissor = 0
+  rock = 0
+  paper = 0
+  
+  for(i in 1:n) {
+    x <- trunc(runif(1, min=1, max=4))
+    if(x == 1) scissor = scissor + 1
+    if(x == 2) rock = rock + 1
+    if(x == 3) paper = paper + 1
+  }
+  cat("가위 :\t", scissor, "\n")
+  cat("바위 :\t", rock, "\n")
+  cat("보 :\t", paper, "\n")
+  cat("--------------\n")
+}
+
+rock(10)
+rock(100)
+rock(1000)
+rock(10000)
+rock(100000)
+rock(1000000)
+```
+
+# 주사위 시뮬레이션
+
+```{r}
+dice <- function(n) {
+  res <- c()
+  
+  for(i in 1:n) {
+    res[i] <- sample(1:6, 1)
+  }
+  res <- data.frame(table(res))
+  res
+}
+
+
+dice(10)
+dice(100)
+dice(1000)
+dice(10000)
+dice(100000)
+dice(1000000)
+```
+
+```{r}
+dice <- function(n) {
+  diceFace <- rep(0, 6)
+  cat("Throw :", n, "\n")
+  for (i in 1:n) {
+    x <- trunc(runif(1) * 6) + 1
+    diceFace[x] = diceFace[x] + 1
+  }
+  for (i in 1:length(diceFace)) {
+    cat("No", i, "=>", diceFace[i], "\n")
+  }
+  cat("--------------\n")
+}
+
+options(scipen = 100)
+dice(10)
+dice(100)
+dice(1000)
+dice(10000)
+dice(100000)
+dice(1000000)
+```
