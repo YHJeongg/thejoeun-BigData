@@ -1,0 +1,1145 @@
+# 타이타닉 데이터를 활용한 승선자의 생사 여부 예측
+
+## EDA(Exploray Data Analysis): 탐색적 데이터 분석
+
+```{r}
+train_df <- read.csv('./Data/Titanic_train.csv')
+head(train_df)
+```
+
+```{r}
+tail(train_df)
+```
+
+```{r}
+str(train_df)
+```
+
+\*\*kaggle 사이트(중요!!)-엄청난 양의 데이터가 있다.
+
+## 컬럼 내용 확인
+
+-   Servived : 생존 여부, 0=No, 1=Yes
+
+-   Pclass : 티켓등급, 1=1st, 2=2nd, 3=3rd
+
+-   SibSp : 함께 탑승한 형제, 자매, 배우자의 수
+
+-   Parch : parents and children
+
+-   Fare : 운임
+
+-   Cabin : 객실번호
+
+-   Embarked : 탑승항구, C=Chersbourg(Austria), Q=QueensTown(English), S=Southampton(English)
+
+### NA 확인
+
+```{r}
+#컬럼별로 결측치 확인 
+colSums(is.na(train_df))
+```
+
+### Age Column의 분석 가부 확인
+
+```{r}
+177/891
+```
+
+### train_df의 Age가 NA인것 빼고 데이터셋 만들기
+
+```{r}
+subset(train_df, !is.na(train_df$Age))
+
+```
+
+### survived 기준으로 정렬
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+train_df <- arrange(train_df, Survived)
+train_df
+```
+
+\*데이터 분석에 따라 시나리오가 나온다.
+
+```{r}
+tail(train_df)
+```
+
+### Survived 기준으로 생존과 사망 Count 확인
+
+```{r}
+paste(
+  nrow((subset(train_df, Survived == 0))),
+  nrow((subset(train_df, Survived == 1))),
+  nrow((subset(train_df, Survived == 0))) / nrow(train_df),
+  nrow((subset(train_df, Survived == 1))) / nrow(train_df))
+```
+
+-애매하다.애매한 비율이다.
+
+### pie chart (생존, 사망 비율)
+
+```{r}
+victim <- round(nrow((subset(train_df, Survived == 0))) / nrow(train_df)*100, 2)
+survive <- round(nrow((subset(train_df, Survived == 1))) / nrow(train_df)*100, 2)
+```
+
+```{r}
+prop <- data.frame(사망 = victim, 생존 = survive)
+```
+
+```{r}
+prop
+```
+
+```{r}
+library(plotrix)
+```
+
+```{r}
+paste(colnames(prop),"\n",c(prop[1,]))
+```
+
+```{r}
+label = paste(colnames(prop),"\n",c(prop[1,]))
+par(family='AppleGothic')
+pie3D(as.matrix(prop),
+      labels = label,
+      main = '타이타닉호 생존수와 사망수')
+```
+
+```{r}
+length(as.matrix(prop))
+```
+
+```{r}
+num <- data.frame(사망 = nrow((subset(train_df, Survived == 0))), 생존 = nrow((subset(train_df, Survived == 1))))
+aa <- c(nrow((subset(train_df, Survived == 0))), nrow((subset(train_df, Survived == 1))))
+num
+```
+
+```{r}
+par(family='AppleGothic')
+
+barplot(aa,
+        col = c('red', 'blue'),
+        main = '타이타닉호 생존수와 사망수',
+        ylim = c(0,600),
+        cex.axis = 0.9,
+        xlab = '생존여부',
+        ylab = '인원수',
+        names = c("사망", '생존'),
+        
+)
+
+# smart한 방법 
+data <- c()
+line <- 0.7
+#text(line, data+20000, data)
+
+for (i in 1:ncol(num)) {
+  data <- num[,i]
+  text(line, data+30, data)
+  line = line+1.2
+}
+```
+
+> survived 컬럼을 Target Column으로 정한다.
+
+```{r}
+head(train_df)
+```
+
+> 컬럼별로 제일 분석/정제하기 쉬운 것부터 찾자.
+
+```{r}
+str(train_df)
+```
+
+## Feature Column 구성을 위해 Sex컬럼 분석
+
+```{r}
+unique(train_df$Sex)
+```
+
+```{r}
+train_df$Sex <- factor(train_df$Sex)
+str(train_df)
+```
+
+### Survived \<- [Sex] (여성의 탑승 인원과 남성의 탑승 인원 확인)
+
+```{r}
+maleCount <- nrow(subset(train_df, train_df$Sex=='male'))
+femaleCount <- nrow(subset(train_df, train_df$Sex=='female'))
+maleCount
+femaleCount
+```
+
+> Target column: 5:5 (비슷한)비율의 데이터
+>
+> Feature column: 차이가 있는 비율의 데이터
+
+\>\> male, female Count는 차이가 있는 비율의 데이터이므로 Feature column
+
+Survived \<- [Sex]
+
+여성의 생존과 사망 인원수
+
+```{r}
+femaleSurvive <- nrow(subset(train_df, (Sex=='female') & (Survived==1)))
+femaleDeath <-nrow(subset(train_df, train_df$Sex=='female' & train_df$Survived==0))
+femaleSurviveRatio <- round(femaleSurvive / sum(femaleSurvive+femaleDeath)*100, 2)
+femaleDeathRatio <- round(femaleDeath / sum(femaleSurvive+femaleDeath)*100, 2)
+femaleSurviveRatio
+femaleDeathRatio
+```
+
+남성의 생존수와 사망수
+
+```{r}
+maleSurvive <- nrow(subset(train_df, train_df$Sex=='male' & train_df$Survived==1))
+maleDeath <- nrow(subset(train_df, train_df$Sex=='male' & train_df$Survived==0))
+maleSurviveRatio <- round(maleSurvive / sum(maleSurvive+maleDeath)*100, 2)
+maleDeathRatio <- round(maleDeath / sum(maleSurvive+maleDeath)*100, 2)
+maleSurviveRatio
+maleDeathRatio
+```
+
+```{r}
+femaleRatio <- data.frame(생존 = femaleSurviveRatio, 사망 = femaleDeathRatio)
+femaleRatio
+
+```
+
+```{r}
+maleRatio <- data.frame(생존 = maleSurviveRatio, 사망 = maleDeathRatio)
+maleRatio
+```
+
+```{r}
+labelFR <- paste(colnames(femaleRatio), "\n", femaleRatio[1,], "%")
+par(family='AppleGothic')
+pie3D(as.matrix(femaleRatio),
+      col = c('aquamarine1', 'red'),
+      labels = labelFR,
+      labelcex = 0.9,
+      explode = 0.1,
+      main = '타이타닉호 여성 생존율'
+      )
+```
+
+```{r}
+labelMR <- paste(colnames(maleRatio), "\n", maleRatio[1,], "%")
+par(family='AppleGothic')
+pie3D(as.matrix(maleRatio),
+      col = c('aquamarine1', 'red'),
+      labels = labelMR,
+      labelcex = 0.9,
+      explode = 0.1,
+      main = '타이타닉호 남성 생존율'
+      )
+```
+
+```{r}
+maleSum <- sum(maleSurvive+maleDeath)
+femaleSum <- sum(femaleSurvive+femaleDeath)
+tt <- data.frame(여성=femaleSum, 남성 = maleSum)
+tt
+```
+
+```{r}
+par(family='AppleGothic')
+
+barplot(c(femaleSum, maleSum),
+        col = c('red', 'blue'),
+        main = '성별 승선 인원수',
+        ylim = c(0,650),
+        cex.axis = 0.9,
+        xlab = '성별',
+        ylab = '승선인원수',
+        names = c("여성", '남성'),
+        
+)
+
+# smart한 방법 
+data <- c()
+line <- 0.7
+#text(line, data+20000, data)
+
+for (i in 1:ncol(tt)) {
+  data <- tt[,i]
+  text(line, data+25, data)
+  line = line+1.2
+}
+```
+
+> Survived \<- [Sex]
+
+```{r}
+head(train_df)
+```
+
+## 티켓 등급 분석
+
+```{r}
+table(train_df$Pclass)
+```
+
+### 1등 객실의 여성 생존율
+
+```{r}
+train_df$Pclass <- factor(train_df$Pclass)
+str(train_df)
+```
+
+```{r}
+femaleCount1st <- sum(nrow(subset(train_df, (Sex=='female') & (Pclass==1))))
+femaleCount1stSurvived <- sum(nrow(subset(train_df, (Sex=='female') & (Pclass==1) & (Survived==1))))
+cat('1등 객실의 여성 생존율은', round(femaleCount1stSurvived / femaleCount1st*100, 2), "%")
+```
+
+1,2,3등 객실의 여성 생존율을 for문을 이용해 해결
+
+```{r}
+gender <- c('female', 'male')
+
+for(j in gender){
+  for(i in 1:3){
+  femaleCountP <- nrow(subset(train_df, (Sex==j) & (Pclass==i)))
+  femaleCountPSurvived <- nrow(subset(train_df, (Sex==j) & (Pclass==i) & (Survived==1)))
+  cat(i,'등 객실의 ',ifelse(j=='female','여성','남성'), ' 생존율',round(femaleCountPSurvived / femaleCountP * 100, 2), '%\n')
+  }
+  cat('==================================\n')
+}
+
+
+```
+
+> Survived \<- [Sex, Pclass]
+
+## Embarked와의 연관성 확인
+
+```{r}
+unique(train_df$Embarked)
+```
+
+```{r}
+train_df$Embarked <- factor(train_df$Embarked)
+str(train_df)
+```
+
+빈칸의 데이터 찾기
+
+```{r}
+subset(train_df, Embarked == '') #fctr: factor
+```
+
+```{r}
+# S
+sum(train_df$Embarked == 'S')
+# C
+sum(train_df$Embarked == 'C')
+# Q
+sum(train_df$Embarked == 'Q')
+```
+
+비어있는 데이터 채우기
+
+```{r}
+train_df$Embarked[train_df$Embarked==''] <- 'S'
+```
+
+```{r}
+sum(train_df$Embarked == 'S')
+```
+
+비어있는 데이터는 채웠지만 factor는 아직 정리 안됨
+
+```{r}
+str(train_df)
+#>>embarked 아직 4개 factor
+```
+
+```{r}
+table(train_df$Embarked)
+```
+
+```{r}
+train_df$Embarked <- factor(train_df$Embarked)
+```
+
+```{r}
+str(train_df)
+```
+
+\>\>factor까지 정리된 모습
+
+```{r}
+par(family='AppleGothic')
+
+barplot(table(train_df$Sex, train_df$Embarked),
+        beside = T,
+        col = c('red','blue'),
+        main = '성별 항구별 인원수',
+        ylim = c(0,650),
+        cex.axis = 0.9,
+        xlab = '항구별',
+        ylab = '성별',
+        names = c(colnames(table(train_df$Sex, train_df$Embarked))),
+        legend.text = T
+        
+)
+
+```
+
+```{r}
+par(family='AppleGothic')
+
+barplot(table(train_df$Survived, train_df$Embarked),
+        beside = T,
+        col=c('red','blue'),
+        main = '항구별 생존 인원수',
+        ylim = c(0,650),
+        cex.axis = 0.9,
+        xlab = '항구별',
+        ylab = '인원수',
+        names = c(colnames(table(train_df$Survived, train_df$Embarked))),
+)
+legend(
+  #표시할 좌표 위치 
+  1, 600,
+  c('사망','생존'),
+  col=c('red','blue'),
+  #pch default = 21
+  pch = c(15,15),
+
+  #범례가 그래프를 가리면 안됨 그래서 사이즈 조정해야 됨(default = 1)
+  cex = 1.2,
+ 
+)
+```
+
+```{r}
+par(family='AppleGothic')
+
+barplot(table(train_df$Pclass, train_df$Embarked),
+        beside = T,
+        col=c('red','blue','yellow'),
+        main = '항구별 객실 등급별 인원',
+        ylim = c(0,500),
+        cex.axis = 0.9,
+        xlab = '항구별',
+        ylab = '인원수',
+        names = c(colnames(table(train_df$Pclass, train_df$Embarked))),
+       
+)
+legend(
+  #표시할 좌표 위치 
+  1, 450,
+  c(rownames(table(train_df$Pclass, train_df$Embarked))),
+  col=c('red','blue','yellow'),
+  #pch default = 21
+  pch = c(15,15),
+
+  #범례가 그래프를 가리면 안됨 그래서 사이즈 조정해야 됨(default = 1)
+  cex = 1,
+ 
+)
+
+```
+
+절반 이상의 승객이 Southampton에서 배를 탔으며 여기에서 탑승한 승객의 70%가 남성이었으며
+
+남성의 사망율이 여성보다 훨씬 높았으므로 Southampton의 사망률이 높게 나왔으며
+
+Southamptom에서 탑승한 승객의 60%이상이 3등급 객실을 사용했다.
+
+C항구에서 탑승한 승객들은 1등 객실 비중 및 생존률이 높은 것으로 보아 이 동네는 부자 동네이다.
+
+```{r}
+cor(train_df$Survived, as.numeric(train_df$Pclass))
+```
+
+1등급에 탄 사람수, 3등급에 탄 사람수가 다른데 상관계수가 -0.3이라는것은 굉장히 관계가 있다는 뜻이다.
+
+# RandomForest로 예측 모델 생성
+
+```{r}
+train_df_T <- train_df
+```
+
+```{r}
+target_col <- c('Survived', 'Sex', 'Pclass', 'Embarked')
+head(train_df_T[,target_col])
+```
+
+### 성별을 숫자로 전환
+
+```{r}
+train_df_T$SexCode[train_df_T$Sex == 'male'] <- 0
+train_df_T$SexCode[train_df_T$Sex == 'female'] <- 1
+head(train_df_T)
+```
+
+### Sex 컬럼 삭제
+
+```{r}
+train_df_T <- subset(train_df_T, select = -Sex)
+head(train_df_T)
+```
+
+```{r}
+target_col <- c('Survived', 'SexCode', 'Pclass', 'Embarked')
+head(train_df_T[,target_col])
+```
+
+### Embarked를 One-Hot Encoding으로 변환
+
+```{r}
+train_df_T$Embarked_C = train_df_T$Embarked == 'C'
+train_df_T$Embarked_S = train_df_T$Embarked == 'S'
+train_df_T$Embarked_Q = train_df_T$Embarked == 'Q'
+head(train_df_T[c('Embarked', 'Embarked_C', 'Embarked_S', 'Embarked_Q')])
+```
+
+```{r}
+target_col = c('Survived', 'Pclass', 'SexCode', 'Embarked_C', 'Embarked_S', 'Embarked_Q')
+head(train_df_T[target_col])
+```
+
+# RandomForest
+
+```{r}
+library(caret)
+set.seed(1234)
+samp <- createDataPartition(train_df_T$Survived, p=0.7, list=F)
+```
+
+```{r}
+data.train <- train_df_T[samp,]
+data.test <- train_df_T[-samp,]
+samp
+data.train
+data.test
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+```
+
+```{r}
+test_data <- data.test[target_col]
+```
+
+```{r}
+library(randomForest)
+```
+
+### 학습시키기
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+타겟컬럼=factor \>\> 객관식
+
+타겟컬럼 !=factor \>\> 주관식
+
+현재 survived 컬럼이 factor가 아니고 int이므로 주관식으로 나옴
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+#rf
+#x
+#y
+#pred
+```
+
+### 정오표
+
+```{r}
+mean(pred == y)
+```
+
+### 정오표
+
+```{r}
+table(pred, y)
+```
+
+> 죽은 사람은 잘 맞히지만, 생존자는 잘 못 맞힌다.
+
+# Survived를 factor로 변환 후 RandomForest
+
+```{r}
+train_data$Survived <- as.factor(train_data$Survived)
+test_data$Survived <- as.factor(test_data$Survived)
+```
+
+```{r}
+str(train_data)
+str(test_data)
+```
+
+시험문제 다시 만들어야됨
+
+```{r}
+rf <- randomForest(Survived ~ ., data=train_data, ntree=100)
+x <- subset(test_data, select = -Survived)
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+mean(pred == test_data$Survived)
+table(pred, test_data$Survived)
+```
+
+수치: regression
+
+\~중에 하나: classification
+
+# 인공신경망
+
+```{r}
+library(nnet)
+```
+
+```{r}
+
+model.nnet <- nnet(Survived ~ ., data=train_data, size=3) # size: 은닉층 개수
+x <- subset(test_data, select = -Survived)
+pred <- predict(model.nnet, x, type = 'class')
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, test_data$Survived)
+```
+
+# SVM
+
+```{r}
+library(e1071)
+```
+
+```{r}
+model <- svm(Survived ~ ., data = train_data)
+pred <- predict(model, x)
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, test_data$Survived)
+```
+
+# 1. Survived와 Death의 비중을 동일하게 하여 예측력 구해보기
+
+```{r}
+str(train_df_T)
+```
+
+```{r}
+nrow(subset(train_df_T, train_df_T$Survived == 0))
+nrow(subset(train_df_T, train_df_T$Survived == 1))
+```
+
+### 생존자와 사망자 수가 다르므로 342명 생존자 수에 사망자 수도 맞춰준다.
+
+```{r}
+death <- subset(train_df_T, train_df_T$Survived == 0)
+deathId <- rownames(death)
+alive <- subset(train_df_T, train_df_T$Survived == 1)
+aliveId <- rownames(alive)
+```
+
+```{r}
+traindeath <-sort(sample(deathId, 342))
+aliveId
+
+trainAlive
+
+train_df_T[traindeath,]
+train_df_T[aliveId,]
+```
+
+```{r}
+SurviveBoth <- rbind(train_df_T[traindeath,], train_df_T[aliveId,])
+SurviveBoth
+```
+
+```{r}
+#train_df_T$Survived <- factor(train_df_T$Survived)
+str(SurviveBoth)
+```
+
+```{r}
+set.seed(1234)
+library(caret)
+#sampOne <- createDataPartition(train_df_T_one$Survived, p=0.7, list = F)
+#sampZero <- createDataPartition(train_df_T_zero$Survived, p=0.7, list = F)
+samp <- createDataPartition(SurviveBoth$Survived, p=0.7, list = F)
+
+data.train <- SurviveBoth[samp,]
+data.test <- SurviveBoth[-samp,]
+samp
+data.train
+data.test
+```
+
+### 예측력 확인
+
+```{r}
+train_data <- data.train[target_col]
+(train_data)
+train_test <- data.test[target_col]
+(train_test)
+```
+
+```{r}
+x <- subset(train_test, select = -Survived)
+y <- train_test$Survived
+x
+y
+```
+
+```{r}
+library(randomForest)
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree = 100)
+rf
+```
+
+```{r}
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, y)
+```
+
+```{r}
+nrow(subset(train_data, train_data$Survived==0))
+nrow(subset(train_data, train_data$Survived==1))
+```
+
+## 인공신경망
+
+```{r}
+library(nnet)
+```
+
+```{r}
+model.nnet <- nnet(Survived ~ ., data=train_data, size=3) # size: 은닉층 개수
+x <- subset(test_data, select = -Survived)
+pred <- predict(model.nnet, x, type = 'raw')
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, test_data$Survived)
+```
+
+## SVM
+
+```{r}
+library(e1071)
+```
+
+```{r}
+model <- svm(Survived ~ ., data = train_data)
+pred <- predict(model, x)
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, test_data$Survived)
+```
+
+# 2. Fare를 추가하여 예측해 보기
+
+```{r}
+target_col = c('Survived', 'Pclass', 'SexCode','Fare', 'Embarked_C', 'Embarked_S', 'Embarked_Q')
+train_df_T[target_col]
+```
+
+```{r}
+set.seed(1234)
+samp <- createDataPartition(train_df_T$Survived, p=0.7, list=F)
+```
+
+```{r}
+data.train <- train_df_T[samp,]
+data.test <- train_df_T[-samp,]
+samp
+data.train
+data.test
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+test_data <- data.test[target_col]
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+```
+
+```{r}
+table(pred, y)
+```
+
+# 3. Age를 추가하여 예측해 보기
+
+```{r}
+target_col = c('Survived', 'Pclass', 'SexCode','Age', 'Embarked_C', 'Embarked_S', 'Embarked_Q')
+```
+
+### Age 컬럼에 결측치를 제외한 데이터만 예측해보기
+
+```{r}
+sum(is.na(train_df_T$Age))
+```
+
+```{r}
+OutAgeNa <- subset(train_df_T, !is.na(train_df$Age))
+sum(is.na(OutAgeNa$Age))
+```
+
+```{r}
+set.seed(1234)
+samp <- createDataPartition(OutAgeNa$Survived, p=0.7, list=F)
+data.train <- OutAgeNa[samp,]
+data.test <- OutAgeNa[-samp,]
+samp
+data.train
+data.test
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+test_data <- data.test[target_col]
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, y)
+```
+
+# 4. Fare, Age를 추가하여 예측해 보기
+
+```{r}
+target_col = c('Survived', 'Pclass', 'SexCode','Age', 'Fare', 'Embarked_C', 'Embarked_S', 'Embarked_Q')
+```
+
+```{r}
+
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+test_data <- data.test[target_col]
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, y)
+```
+
+# 5. Age를 연령대로 구분하여 예측해 보기
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+arrange(OutAgeNa, desc(Age))
+#0~80
+```
+
+### 히스토그램으로 나이별 구간 분포도 확인하기
+
+```{r}
+mean(OutAgeNa$Age)
+hist(OutAgeNa$Age)
+
+```
+
+### 0대\~80대까지 각자 나이 구간별로 지정해주기
+
+```{r}
+AgeRangeT <- transform(OutAgeNa,
+AgeRange = ifelse(OutAgeNa$Age < 10, '0',
+      ifelse(OutAgeNa$Age >=10 & OutAgeNa$Age < 20, '10',
+      ifelse(OutAgeNa$Age >=20 & OutAgeNa$Age < 30, '20',
+      ifelse(OutAgeNa$Age >=30 & OutAgeNa$Age < 40, '30',
+      ifelse(OutAgeNa$Age >=40 & OutAgeNa$Age < 50, '40',
+      ifelse(OutAgeNa$Age >=50 & OutAgeNa$Age < 60, '50',
+      ifelse(OutAgeNa$Age >=60 & OutAgeNa$Age < 70, '60',
+      ifelse(OutAgeNa$Age >=70 & OutAgeNa$Age < 80, '70','80'
+             ))))))))
+)
+```
+
+```{r}
+target_col = c('Survived', 'Pclass', 'SexCode','AgeRange', 'Embarked_C', 'Embarked_S', 'Embarked_Q')
+```
+
+```{r}
+set.seed(1234)
+library(caret)
+samp <- createDataPartition(AgeRangeT$Survived, p=0.7, list=F)
+data.train <- AgeRangeT[samp,]
+data.test <- AgeRangeT[-samp,]
+samp
+data.train
+data.test
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+test_data <- data.test[target_col]
+```
+
+```{r}
+library(randomForest)
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, y)
+```
+
+# 6. 국가별로 구분하여 예측해 보기
+
+```{r}
+train_df
+```
+
+```{r}
+CountryTrain <- transform(train_df,
+countryRange = ifelse(train_df$Embarked=='C', 'Austria', 'English'))
+```
+
+```{r}
+CountryTrain
+```
+
+```{r}
+target_col = c('Survived','Sex', 'Pclass', 'countryRange')
+```
+
+```{r}
+set.seed(1234)
+library(caret)
+samp <- createDataPartition(CountryTrain$Survived, p=0.7, list=F)
+data.train <- CountryTrain[samp,]
+data.test <- CountryTrain[-samp,]
+samp
+data.train
+data.test
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+test_data <- data.test[target_col]
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, y)
+```
+
+# 7. Fare를 분류하여 예측해 보기
+
+```{r}
+head(arrange(train_df, Fare))
+head(arrange(train_df, desc(Fare)))
+```
+
+```{r}
+arrange(train_df, Fare)
+hist(train_df$Fare)
+```
+
+```{r}
+FareTrain <- transform(train_df,
+FareRange = ifelse(train_df$Fare < 50, 'a',
+       ifelse(train_df$Fare < 100 & train_df$Fare >= 50, 'b',
+      ifelse(train_df$Fare < 150 & train_df$Fare >= 100, 'c',
+             ifelse(train_df$Fare < 200 & train_df$Fare >= 150, 'd', 'e')))))
+```
+
+```{r}
+FareTrain
+```
+
+```{r}
+target_col = c('Survived','Sex', 'Pclass', 'FareRange')
+```
+
+```{r}
+set.seed(1234)
+library(caret)
+samp <- createDataPartition(FareTrain$Survived, p=0.7, list=F)
+data.train <- FareTrain[samp,]
+data.test <- FareTrain[-samp,]
+samp
+data.train
+data.test
+```
+
+```{r}
+train_data <- data.train[target_col]
+head(train_data)
+test_data <- data.test[target_col]
+```
+
+```{r}
+rf <- randomForest(Survived ~ ., data = train_data, ntree=100)
+```
+
+```{r}
+x <- subset(test_data, select = -Survived)
+y <- test_data$Survived
+pred <- predict(rf, x)
+head(pred)
+```
+
+```{r}
+pred[pred <= 0.5] <- 0
+pred[pred > 0.5] <- 1
+head(pred)
+```
+
+```{r}
+mean(pred == y)
+table(pred, y)
+```

@@ -347,11 +347,26 @@ for (i in seq(0,90,10)) {
   train_data5 <- cbind(train_data5, train_data5$Age >= i & train_data5$Age < (i+10))
   test_data5 <- cbind(test_data5, test_data5$Age >= i & test_data5$Age < (i+10))
 }
-colnames(train_data5) <- c("Survived","SexCode","Pclass","Embarked","Age",seq(0,90,10))
-colnames(test_data5) <- c("Survived","SexCode","Pclass","Embarked","Age",seq(0,90,10))
+colnames(train_data5) <- c("Survived","SexCode","Pclass","Embarked","Age",seq(10,100,10))
+colnames(test_data5) <- c("Survived","SexCode","Pclass","Embarked","Age",seq(10,100,10))
 
 train_data5 <- subset(train_data5, select=-Age)
 test_data5 <- subset(test_data5, select=-Age)
+
+head(train_data5)
+```
+
+```{r}
+train_data5$Embarked_C = train_data5$Embarked == "C"
+train_data5$Embarked_S = train_data5$Embarked == "S"
+train_data5$Embarked_Q = train_data5$Embarked == "Q"
+
+test_data5$Embarked_C = test_data5$Embarked == "C"
+test_data5$Embarked_S = test_data5$Embarked == "S"
+test_data5$Embarked_Q = test_data5$Embarked == "Q"
+
+train_data5 <- subset(train_data5, select=-Embarked)
+test_data5 <- subset(test_data5, select=-Embarked)
 
 head(train_data5)
 ```
