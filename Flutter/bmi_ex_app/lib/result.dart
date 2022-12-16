@@ -16,21 +16,24 @@ class ResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 58, 38, 92),
       appBar: AppBar(
         backgroundColor: const Color(0xFF111328),
-        title: const Text('B.M.I Calculator'),
+        title: const Text('BMI 계산기'),
         centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment
-            .stretch, // stretch out the card widget resuable card text box
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
+          const Expanded(
             child: Center(
                 child: Text(
-              'Your Result',
-              style: ktitleTextStyle,
+              '당신의 BMI 결과',
+              style: TextStyle(
+                  fontSize: 50.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             )),
           ),
           Expanded(
@@ -42,43 +45,49 @@ class ResultPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    resultText.toUpperCase(), // use from calculator brain class
-                    style: kresultTextStyle,
+                    resultText.toUpperCase(),
+                    style: const TextStyle(
+                        color: Color(0xFF24D876),
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    bmiResult, // use from calculator brain class
-                    style: kBMITextStyle,
+                    bmiResult,
+                    style: const TextStyle(
+                        fontSize: 100.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                   Text(
-                    interpretation, // use from calculator brain class
-                    style: kbodyTextStyle,
+                    interpretation,
+                    style: const TextStyle(fontSize: 22.0, color: Colors.white),
                     textAlign: TextAlign.center,
                   )
                 ],
               ),
             ),
           ),
-
-          // Second screen where result shows and re-calculate option will be there
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
             },
             child: Container(
-              // bottom box for clicking
               margin: const EdgeInsets.only(top: 10.0),
               padding: const EdgeInsets.only(bottom: 10.0),
               height: 70.0,
-              // bottom box for clicking
               child: Card(
                 color: Colors.pinkAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
-                    'Re-Calculate',
-                    style: klargestButtonTextStyle,
+                    '다시 계산하기',
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
