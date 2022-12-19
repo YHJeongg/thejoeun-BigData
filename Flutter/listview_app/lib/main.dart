@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'view/insert_list.dart';
-import 'view/table_list.dart';
+import 'package:listview_app/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,11 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      routes: {
-        '/': (context) => const TableList(),
-        '/insert': (context) => const InsertList(),
-      },
-      initialRoute: '/',
+      home: const Home(),
     );
   }
 }
