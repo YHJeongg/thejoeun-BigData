@@ -4,7 +4,10 @@ class TodoList {
   String workList;
 
   // Constructor
-  TodoList({required this.imagePath, required this.workList});
+  TodoList(
+      {required this.imagePath,
+      required this.workList,
+      required bool listCheck});
 
   // Function
 }

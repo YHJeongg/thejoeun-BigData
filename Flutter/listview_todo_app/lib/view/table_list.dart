@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:listview_todo_app/model/message.dart';
 import 'package:listview_todo_app/model/todo_list.dart';
 import 'package:listview_todo_app/view/detail_list.dart';
+
+import '../model/message.dart';
 
 class TableList extends StatefulWidget {
   const TableList({super.key});
@@ -30,14 +29,15 @@ class _TableListState extends State<TableList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main View'),
+        title: const Text("Main View"),
         actions: [
           IconButton(
             onPressed: () {
-              //
+              Navigator.pushNamed(context, '/insert')
+                  .then((value) => rebuildData());
             },
             icon: const Icon(Icons.add_outlined),
-          )
+          ),
         ],
       ),
       body: Center(
@@ -49,27 +49,22 @@ class _TableListState extends State<TableList> {
                 Message.workList = todoList[position].workList;
                 Message.imagePath = todoList[position].imagePath;
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DetailList(),
-                  ),
-                );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DetailList(),
+                    ));
               },
               child: Card(
                 child: Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Image.asset(
-                        todoList[position].imagePath,
-                      ),
+                      child: Image.asset(todoList[position].imagePath),
                     ),
                     const SizedBox(
                       width: 20,
                     ),
-                    Text(
-                      todoList[position].workList,
-                    ),
+                    Text(todoList[position].workList),
                   ],
                 ),
               ),
@@ -78,5 +73,15 @@ class _TableListState extends State<TableList> {
         ),
       ),
     );
+  }
+
+  rebuildData() {
+    setState(() {
+      if (Message.action == true) {
+        todoList.add(
+            TodoList(imagePath: Message.imagePath, workList: Message.workList));
+        Message.action = false;
+      }
+    });
   }
 }
