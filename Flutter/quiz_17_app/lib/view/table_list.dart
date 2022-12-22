@@ -54,18 +54,23 @@ class _TableListState extends State<TableList> {
                       builder: (context) => const DetailList(),
                     ));
               },
-              child: Card(
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset(todoList[position].imagePath),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(todoList[position].workList),
-                  ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  color:
+                      position % 2 == 1 ? Colors.red[100] : Colors.yellow[100],
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(todoList[position].imagePath),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(todoList[position].workList),
+                    ],
+                  ),
                 ),
               ),
             );
