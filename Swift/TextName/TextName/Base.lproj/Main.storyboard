@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="TextName" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome !" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eZu-Ev-NhE">
+                                <rect key="frame" x="16" y="293" width="361" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name :" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MeU-TX-Roj">
+                                <rect key="frame" x="16" y="398" width="54" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="이름을 입력하세요!" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Rzs-oG-Rpt">
+                                <rect key="frame" x="78" y="391" width="299" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ft9-iR-hrH">
+                                <rect key="frame" x="123" y="525" width="64" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Send"/>
+                                <connections>
+                                    <action selector="btnSend:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cgx-Ya-sEI"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FpM-aP-XQE">
+                                <rect key="frame" x="205" y="525" width="64" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Clear"/>
+                                <connections>
+                                    <action selector="btnClear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8io-7m-rcL"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="eZu-Ev-NhE" firstAttribute="trailing" secondItem="Rzs-oG-Rpt" secondAttribute="trailing" id="5AA-Sh-LqC"/>
+                            <constraint firstItem="eZu-Ev-NhE" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="5at-vQ-KJP"/>
+                            <constraint firstItem="MeU-TX-Roj" firstAttribute="top" secondItem="eZu-Ev-NhE" secondAttribute="bottom" constant="84" id="CsP-3B-lyv"/>
+                            <constraint firstItem="Ft9-iR-hrH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="123" id="DHq-OX-pXG"/>
+                            <constraint firstItem="eZu-Ev-NhE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="234" id="GNa-mT-bC2"/>
+                            <constraint firstItem="Ft9-iR-hrH" firstAttribute="baseline" secondItem="FpM-aP-XQE" secondAttribute="baseline" id="Ona-Bt-6IC"/>
+                            <constraint firstItem="Rzs-oG-Rpt" firstAttribute="top" secondItem="eZu-Ev-NhE" secondAttribute="bottom" constant="77" id="S5G-JU-dFB"/>
+                            <constraint firstItem="eZu-Ev-NhE" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="ZUT-S7-ofs"/>
+                            <constraint firstItem="FpM-aP-XQE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ft9-iR-hrH" secondAttribute="trailing" constant="8" symbolic="YES" id="cQy-RO-wQy"/>
+                            <constraint firstItem="eZu-Ev-NhE" firstAttribute="leading" secondItem="MeU-TX-Roj" secondAttribute="leading" id="eOs-Mi-yPM"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="FpM-aP-XQE" secondAttribute="trailing" constant="124" id="lfo-1a-d0z"/>
+                            <constraint firstItem="Ft9-iR-hrH" firstAttribute="top" secondItem="Rzs-oG-Rpt" secondAttribute="bottom" constant="99" id="ltZ-tY-SFw"/>
+                            <constraint firstItem="Rzs-oG-Rpt" firstAttribute="leading" secondItem="MeU-TX-Roj" secondAttribute="trailing" constant="8" id="ruW-Rr-WD3"/>
+                            <constraint firstItem="MeU-TX-Roj" firstAttribute="centerY" secondItem="Rzs-oG-Rpt" secondAttribute="centerY" id="szW-u6-aM4"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="lblWelcome" destination="eZu-Ev-NhE" id="FVR-cr-Smd"/>
+                        <outlet property="tfName" destination="Rzs-oG-Rpt" id="ods-5T-N6e"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="52.671755725190835" y="-27.464788732394368"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

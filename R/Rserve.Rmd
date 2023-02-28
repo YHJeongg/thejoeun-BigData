@@ -1,0 +1,6 @@
+# Rserve
+
+```{r}
+library(Rserve)
+Rserve(FALSE, port=6311, args='--RS-encoding utf8 --no-save')
+```

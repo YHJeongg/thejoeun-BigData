@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="lampAlert" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alert" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GgR-RJ-AsN">
+                                <rect key="frame" x="178" y="85" width="37" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="ez6-Uc-Flt"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lamp_on.png" highlightedImage="lamp_on.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZvJ-wo-K4W">
+                                <rect key="frame" x="79" y="152" width="240" height="400"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gsb-Da-fGl">
+                                <rect key="frame" x="71" y="621" width="54" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="켜기"/>
+                                <connections>
+                                    <action selector="btnOn:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Sje-9D-HBH"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eAl-IV-cnR">
+                                <rect key="frame" x="167" y="621" width="54" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="끄기"/>
+                                <connections>
+                                    <action selector="btnOff:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zLX-77-1BA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m6v-B9-RN8">
+                                <rect key="frame" x="267" y="621" width="54" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="제거"/>
+                                <connections>
+                                    <action selector="btnRemove:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EZl-8T-KfJ"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="eAl-IV-cnR" firstAttribute="leading" secondItem="gsb-Da-fGl" secondAttribute="trailing" constant="42" id="55u-hT-DIj"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="gsb-Da-fGl" secondAttribute="bottom" constant="162" id="7e6-Qg-gzM"/>
+                            <constraint firstItem="GgR-RJ-AsN" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="26" id="Efk-TC-SrR"/>
+                            <constraint firstItem="gsb-Da-fGl" firstAttribute="baseline" secondItem="eAl-IV-cnR" secondAttribute="baseline" id="KLi-sO-271"/>
+                            <constraint firstItem="gsb-Da-fGl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="71" id="MeO-Gc-TTP"/>
+                            <constraint firstItem="eAl-IV-cnR" firstAttribute="baseline" secondItem="gsb-Da-fGl" secondAttribute="firstBaseline" id="TSq-bj-reY"/>
+                            <constraint firstItem="eAl-IV-cnR" firstAttribute="baseline" secondItem="m6v-B9-RN8" secondAttribute="baseline" id="TbC-9h-S76"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ZvJ-wo-K4W" secondAttribute="trailing" constant="74" id="XKT-ki-zvr"/>
+                            <constraint firstItem="ZvJ-wo-K4W" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="79" id="ZPw-Qg-4el"/>
+                            <constraint firstItem="GgR-RJ-AsN" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cEa-Dm-sHO"/>
+                            <constraint firstItem="ZvJ-wo-K4W" firstAttribute="top" secondItem="GgR-RJ-AsN" secondAttribute="bottom" constant="46" id="sfg-fa-fw0"/>
+                            <constraint firstItem="m6v-B9-RN8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="eAl-IV-cnR" secondAttribute="trailing" symbolic="YES" id="tal-dt-ere"/>
+                            <constraint firstItem="gsb-Da-fGl" firstAttribute="top" secondItem="ZvJ-wo-K4W" secondAttribute="bottom" constant="69" id="yLQ-qW-OuJ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="m6v-B9-RN8" secondAttribute="trailing" constant="72" id="ySZ-tx-rZJ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="imgView" destination="ZvJ-wo-K4W" id="qei-2n-RVH"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="-27"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="lamp_on.png" width="1215" height="1920"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

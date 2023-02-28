@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="fGb-sn-dqA">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="TabBar" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zSy-Sc-t4J">
+                                <rect key="frame" x="35" y="79" width="323" height="34.333333333333343"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dzB-S0-dZx">
+                                        <rect key="frame" x="0.0" y="0.0" width="157.66666666666666" height="34.333333333333336"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="이미지뷰로 이동"/>
+                                        <connections>
+                                            <action selector="btnGoImageView:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZUO-nq-SsW"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tY9-pA-gWt">
+                                        <rect key="frame" x="165.66666666666663" y="0.0" width="157.33333333333337" height="34.333333333333336"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="데이트피커로 이동"/>
+                                        <connections>
+                                            <action selector="btnGoDatePicker:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oA9-f0-6FV"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="pencil" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="aLP-4o-euS">
+                                <rect key="frame" x="76" y="295" width="240" height="263"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="zSy-Sc-t4J" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="5X9-bq-clW"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="zSy-Sc-t4J" secondAttribute="trailing" constant="35" id="ACh-4p-a03"/>
+                            <constraint firstItem="zSy-Sc-t4J" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="35" id="wQu-21-KHq"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" systemItem="more" id="89g-lL-0gD"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="997.70992366412213" y="-419.0140845070423"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="vig-Ji-l53">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="fGb-sn-dqA" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="D3S-kz-cUd">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="ObU-Vj-9qI"/>
+                        <segue destination="y3o-js-bOJ" kind="relationship" relationship="viewControllers" id="M1s-yo-ajK"/>
+                        <segue destination="a9q-vC-Y9S" kind="relationship" relationship="viewControllers" id="HMx-a0-LDa"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="576-SN-6K2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="116.79389312977099" y="-2.1126760563380285"/>
+        </scene>
+        <!--Image View Controller-->
+        <scene sceneID="kXn-2s-OSL">
+            <objects>
+                <viewController id="y3o-js-bOJ" customClass="ImageViewController" customModule="TabBar" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Z7P-Ug-9ep">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vBs-GM-W9w">
+                                <rect key="frame" x="16" y="59" width="197" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Yx-uv-ZR5">
+                                <rect key="frame" x="60" y="669" width="105" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Image 확대"/>
+                                <connections>
+                                    <action selector="btnResizeImage:" destination="y3o-js-bOJ" eventType="touchUpInside" id="YOT-cj-MhM"/>
+                                </connections>
+                            </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9ho-Eh-dJn">
+                                <rect key="frame" x="271" y="671" width="51" height="31"/>
+                                <connections>
+                                    <action selector="switchImageOnOff:" destination="y3o-js-bOJ" eventType="valueChanged" id="XqA-Ke-y6x"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="전구 스위치" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UK7-9R-o09">
+                                <rect key="frame" x="255" y="642" width="78" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="u7I-ww-Ig2"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="UK7-9R-o09" firstAttribute="leading" secondItem="u7I-ww-Ig2" secondAttribute="leading" constant="255" id="CAM-EM-FHY"/>
+                            <constraint firstItem="u7I-ww-Ig2" firstAttribute="trailing" secondItem="9ho-Eh-dJn" secondAttribute="trailing" constant="73" id="DTK-1l-DWI"/>
+                            <constraint firstItem="5Yx-uv-ZR5" firstAttribute="leading" secondItem="u7I-ww-Ig2" secondAttribute="leading" constant="60" id="YtV-nG-xxa"/>
+                            <constraint firstItem="9ho-Eh-dJn" firstAttribute="top" secondItem="UK7-9R-o09" secondAttribute="bottom" constant="8" id="ft1-Ku-BhW"/>
+                            <constraint firstItem="UK7-9R-o09" firstAttribute="top" secondItem="u7I-ww-Ig2" secondAttribute="top" constant="583" id="qEz-Oo-w9T"/>
+                            <constraint firstItem="5Yx-uv-ZR5" firstAttribute="centerY" secondItem="9ho-Eh-dJn" secondAttribute="centerY" id="qGO-cl-jtF"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" systemItem="favorites" id="ujY-01-Onb"/>
+                    <connections>
+                        <outlet property="btnResize" destination="5Yx-uv-ZR5" id="YLR-is-GtZ"/>
+                        <outlet property="imgView" destination="vBs-GM-W9w" id="WOD-iK-gCs"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dqa-GM-xHK" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="998" y="416"/>
+        </scene>
+        <!--DatePicker-->
+        <scene sceneID="xUX-Vr-35A">
+            <objects>
+                <viewController id="a9q-vC-Y9S" customClass="DatePickerViewController" customModule="TabBar" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="SpB-TB-tM6">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1hb-CE-Gz0">
+                                <rect key="frame" x="16" y="59" width="354" height="40"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xLP-w5-Ten">
+                                <rect key="frame" x="16" y="322" width="361" height="46"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="46" id="vns-7N-zdu"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="6Uc-mo-ePE">
+                                <rect key="frame" x="36" y="107" width="320" height="216"/>
+                                <locale key="locale" localeIdentifier="ko"/>
+                                <connections>
+                                    <action selector="changeDatePicker:" destination="a9q-vC-Y9S" eventType="valueChanged" id="jrW-PZ-rGp"/>
+                                </connections>
+                            </datePicker>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="qht-il-EZa"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6Uc-mo-ePE" firstAttribute="leading" secondItem="qht-il-EZa" secondAttribute="leading" constant="36" id="2ro-8f-xmn"/>
+                            <constraint firstItem="xLP-w5-Ten" firstAttribute="trailing" secondItem="SpB-TB-tM6" secondAttribute="trailingMargin" id="31f-TR-nhi"/>
+                            <constraint firstItem="1hb-CE-Gz0" firstAttribute="leading" secondItem="xLP-w5-Ten" secondAttribute="leading" id="4zW-0w-hws"/>
+                            <constraint firstItem="6Uc-mo-ePE" firstAttribute="top" secondItem="1hb-CE-Gz0" secondAttribute="bottom" constant="8" id="6UU-ad-zom"/>
+                            <constraint firstItem="qht-il-EZa" firstAttribute="bottom" secondItem="6Uc-mo-ePE" secondAttribute="bottom" constant="446" id="C0g-UE-t8X"/>
+                            <constraint firstItem="qht-il-EZa" firstAttribute="bottom" secondItem="xLP-w5-Ten" secondAttribute="bottom" constant="401" id="WKz-bn-gO8"/>
+                            <constraint firstItem="1hb-CE-Gz0" firstAttribute="top" secondItem="qht-il-EZa" secondAttribute="top" id="YLI-S9-Tuq"/>
+                            <constraint firstItem="qht-il-EZa" firstAttribute="trailing" secondItem="1hb-CE-Gz0" secondAttribute="trailing" constant="23" id="ZKi-x8-gfi"/>
+                            <constraint firstItem="1hb-CE-Gz0" firstAttribute="leading" secondItem="SpB-TB-tM6" secondAttribute="leadingMargin" id="mtg-lF-NPM"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" systemItem="recents" id="Da1-X5-Az9"/>
+                    <navigationItem key="navigationItem" title="DatePicker" id="XZu-c1-GsC"/>
+                    <connections>
+                        <outlet property="lblCurrentTime" destination="1hb-CE-Gz0" id="eyH-dj-HYR"/>
+                        <outlet property="lblPickerTime" destination="xLP-w5-Ten" id="xh4-Bc-qJj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vp7-GD-eyo" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1764" y="-2"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="pencil" catalog="system" width="128" height="113"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
